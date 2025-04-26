@@ -9,7 +9,7 @@ $username_error = "";
 $password_error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$username = $_POST["username"];
+	$username = htmlspecialchars($_POST["username"]);
 	$password = $_POST["password"];
 	$password2 = $_POST["password2"];
 
