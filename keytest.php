@@ -4,8 +4,6 @@ require_once "rlwe.php";
 
 session_start();
 
-// any post handling should be done here
-
 autosessionRLWE();
 
 ?>
