@@ -1,5 +1,5 @@
 <?php
-require_once "secret.php";
+require_once "config.php";
 
 $username = "";
 $password = "";
@@ -9,7 +9,12 @@ $username_error = "";
 $password_error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$username_error = "test";
+	if (empty($_POST["username"])) {
+		$username_error = "Username must not be empty";
+	}
+	else if (strlen($_POST["username"]) > 20) {
+		$username_error = "Username must be less than 20 characters";
+	}
 }
 
 ?>
@@ -20,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		<title>entQngle</title>
 	</head>
 	<body>
-		<form action="signup.php" method="GET">
+		<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="GET">
 			Username<br>
 			<input type="text" name="username"><br>
 			<a class="error"><?php echo $username_error; if (!empty($username_error)) echo "<br>"; ?></a><br>
