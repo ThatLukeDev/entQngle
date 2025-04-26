@@ -25,9 +25,9 @@ echo "Recieved: {$recieved}<br>";
 let privKey = autogenPrivateRLWE();
 let pubKey = autogenPublicRLWE(privKey);
 
-let val = Math.floor(Math.random() * 2);
-let encoded = encodeBitRLWE(pubKey, 16, modulusRLWE, val);
-let decoded = decodeBitRLWE(privKey, encoded, modulusRLWE);
+let val = Math.floor(Math.random() * 256);
+let encoded = autoencodeByteRLWE(pubKey, val);
+let decoded = autodecodeByteRLWE(privKey, encoded);
 
 document.querySelector("body").innerHTML += `<br>Sent ${val}`;
 document.querySelector("body").innerHTML += `<br>Recieved ${decoded}`;

@@ -146,10 +146,39 @@ var decodeBitRLWE = (key, msg, mod) => {
 	return val;
 };
 
+var encodeByteRLWE = (key, samples, mod, msg) => {
+	let out = [];
+
+	for (let i = 0; i < 8; i++) {
+		let bit = (msg & (1 << i)) >> i;
+		out[i] = encodeBitRLWE(key, samples, mod, bit);
+	}
+
+	return out;
+}
+
+var decodeByteRLWE = (key, msg, mod) => {
+	let out = 0;
+
+	for (let i = 0; i < 8; i++) {
+		out |= decodeBitRLWE(key, msg[i], mod) << i;
+	}
+
+	return out;
+}
+
 var autogenPrivateRLWE = () => {
 	return genPrivateRLWE(privSizeRLWE, modulusRLWE);
 }
 
 var autogenPublicRLWE = (key) => {
 	return genPublicRLWE(key, pubSizeRLWE, modulusRLWE, errorRLWE);
+}
+
+var autoencodeByteRLWE = (pubKey, msg) => {
+	return encodeByteRLWE(pubKey, samplesRLWE, modulusRLWE, msg);
+}
+
+var autodecodeByteRLWE = (privKey, msg) => {
+	return decodeByteRLWE(privKey, msg, modulusRLWE);
 }
