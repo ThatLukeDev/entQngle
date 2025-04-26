@@ -220,6 +220,8 @@ function autodecodeStrRLWE($privKey, $msg) {
 	return decodeStrRLWE($privKey, $msg, $GLOBALS["modulusRLWE"]);
 }
 function autosessionRLWE() {
+	// WARNING: localStorage is used here as the securecookies by the webpage relies on TLS, which is not quantum-safe.
+	// Any XSS or local script can read localStorage, thus breaking the quantum-safe algorithm, so dont get hacked!
 	echo '<script src="rlwe-func.js"></script>';
 	echo '<script>
 		if ((new Date()).getTime() - parseInt(localStorage.getItem("keydate")) > ' . $GLOBALS["keyExpireAutoRLWE"] . ') {
