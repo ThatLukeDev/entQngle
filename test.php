@@ -14,16 +14,16 @@ function randMatrix($row, $col, $max) {
 function formatMatrix($mat) {
 	$out = "";
 
-	for ($i = 0; $i < count($mat); $i++) {
-		for ($j = 0; $j < count($mat[i]); $j++) {
-			$out .= $mat[i][j];
+	for ($i = 0; $i < count($mat, 0); $i++) {
+		for ($j = 0; $j < count($mat[$i], 0); $j++) {
+			$out .= str_replace(" ", "&nbsp;", str_pad(strval($mat[$i][$j]), 15));
 		}
-		$out .= "\n";
+		$out .= "<br><br><br>";
 	}
 
 	return $out;
 }
 
-$mat = randMatrix(3, 4, 9);
+$mat = randMatrix(4, 4, 9);
 echo formatMatrix($mat);
 ?>
