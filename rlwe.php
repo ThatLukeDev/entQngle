@@ -222,8 +222,8 @@ function autosessionRLWE() {
 	if ($_POST["keyrlwe"]) {
 		$contents = json_decode(base64_decode($_POST["keyrlwe"]));
 		$key = [];
-		for ($i = 0; $i < 32; $i++) {
-			$key[$i] = decodeByteRLWE($_SESSION["privKey"], $contents[$i], $modulusRLWE);
+		for ($i = 0; $i < count($contents, 0); $i++) {
+			$key[$i] = decodeByteRLWE($_SESSION["privKey"], $contents[$i], $GLOBALS["modulusRLWE"]);
 		}
 		$_SESSION["key"] = $key;
 	}
