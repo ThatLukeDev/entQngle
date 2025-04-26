@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		<title>entQngle</title>
 	</head>
 	<body>
-		<form id="form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="GET">
+		<form id="form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
 			Username<br>
 			<input class="pass" type="text" name="username" value="<?php echo rlwe_encrypt($username); ?>"><br><br>
 

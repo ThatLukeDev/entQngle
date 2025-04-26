@@ -121,6 +121,7 @@ function mixPublicRLWE($key, $samples, $mod) {
 
 function encodeBitRLWE($key, $samples, $mod, $bit) {
 	$mixed = mixPublicRLWE($key, $samples, $mod);
+	$extra = 0;
 
 	if ($bit == 1) {
 		$mixed[1] += intdiv($mod, 2);
@@ -180,7 +181,7 @@ function encodeStrRLWE($key, $samples, $mod, $str) {
 	$out = [];
 
 	for ($i = 0; $i < strlen($str); $i++) {
-		$out[i] = encodeByteRLWE($key, $samples, $mod, ord($str[i]));
+		$out[$i] = encodeByteRLWE($key, $samples, $mod, ord($str[$i]));
 	}
 
 	return $out;
