@@ -29,7 +29,7 @@ else {
 		xhttp.open('POST', '" . htmlspecialchars($_SERVER["PHP_SELF"]) . "', true);
 		xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 		xhttp.onreadystatechange = () => {
-			if (xhttp.status == 202 && xhttp.readyState == 4) {
+			if (xhttp.status == 200 && xhttp.readyState == 4) {
 				let encoded = JSON.parse(atob(xhttp.responseText));
 				let key = [];
 				for (let i = 0; i < encoded.length; i++) {
