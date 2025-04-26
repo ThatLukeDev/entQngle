@@ -1,3 +1,7 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -5,7 +9,7 @@
 	</head>
 	<body>
 		<?php
-			if (session_status() != PHP_SESSION_ACTIVE) echo "
+			if (!isset($_SESSION["username"])) echo "
 				<button id='signin'>Sign in</button>
 				<button id='signup'>Sign up</button>
 			";
