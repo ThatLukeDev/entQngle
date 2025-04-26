@@ -82,7 +82,7 @@ function genPrivateRLWE($size, $mod) {
 
 function genPublicRLWE($key, $size, $mod, $error) {
 	$key1 = randMatrix($size, count($key), $mod - 1);
-	$key2 = array_merge(mulMatrix($key1, $key));
+	$key2 = mulMatrix($key1, $key);
 	$keyWithErrors = [];
 	for ($i = 0; $i < $size; $i++) {
 		$keyWithErrors[$i] = $key2[$i][0];

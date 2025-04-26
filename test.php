@@ -22,16 +22,16 @@ echo "Recieved: {$recieved}<br>";
 <script src="rlwe-func.js"></script>
 <script>
 
-let mat1 = randMatrix(2, 3, 4);
-let mat2 = randMatrix(3, 2, 4);
+let privKey = autogenPrivateRLWE();
+let pubKey = autogenPublicRLWE(privKey);
 
-document.querySelector("body").innerHTML += "<br>Mat1<br>";
-document.querySelector("body").innerHTML += formatMatrix(mat1);
+document.querySelector("body").innerHTML += "<br>Private<br>";
+document.querySelector("body").innerHTML += formatMatrix(privKey);
 
-document.querySelector("body").innerHTML += "<br>Mat2<br>";
-document.querySelector("body").innerHTML += formatMatrix(mat2);
+document.querySelector("body").innerHTML += "<br>Public<br>";
+document.querySelector("body").innerHTML += formatMatrix(pubKey[0]);
 
-document.querySelector("body").innerHTML += "<br>Mul<br>";
-document.querySelector("body").innerHTML += formatMatrix(mulMatrix(mat1, mat2));
+document.querySelector("body").innerHTML += "<br>Errored<br>";
+document.querySelector("body").innerHTML += formatVector(pubKey[1]);
 
 </script>

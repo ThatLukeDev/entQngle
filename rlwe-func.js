@@ -45,8 +45,50 @@ var formatVector = (vec) => {
 	let out = "";
 
 	for (let i = 0; i < vec.length; i++) {
-		out += vec[i] + ("&nbsp;".repeat(15 - mat[i][j].toString().length));
+		out += vec[i] + ("&nbsp;".repeat(15 - vec[i].toString().length));
 	}
 
 	return out;
 };
+
+var randomInstruction = () => {
+	let sum = 0;
+	for (let i = 0; i < Math.floor(Math.random() * 16); i++) {
+		sum += i;
+	}
+};
+
+var modulusRLWE = 524287;
+var privSizeRLWE = 16;
+var pubSizeRLWE = 128;
+var errorRLWE = 8191;
+var samplesRLWE = 16;
+
+var genPrivateRLWE = (size, mod) => {
+	return randMatrix(size, 1, mod);
+}
+
+var genPublicRLWE = (key, size, mod, error) => {
+	let key1 = randMatrix(size, key.length, mod);
+	let key2 = mulMatrix(key1, key);
+	let keyWithErrors = new Int32Array(size);
+	self.crypto.getRandomValues(keyWithErrors);
+
+	for (let i = 0; i < size; i++) {
+		keyWithErrors[i] %= error;
+		keyWithErrors[i] += key2[i][0]
+		keyWithErrors[i] %= mod;
+		keyWithErrors[i] += mod;
+		keyWithErrors[i] %= mod;
+	}
+
+	return [key1, keyWithErrors];
+};
+
+var autogenPrivateRLWE = () => {
+	return genPrivateRLWE(privSizeRLWE, modulusRLWE);
+}
+
+var autogenPublicRLWE = (key) => {
+	return genPublicRLWE(key, pubSizeRLWE, modulusRLWE, errorRLWE);
+}
