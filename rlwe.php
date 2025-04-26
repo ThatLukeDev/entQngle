@@ -220,8 +220,11 @@ function autodecodeStrRLWE($privKey, $msg) {
 	return decodeStrRLWE($privKey, $msg, $GLOBALS["modulusRLWE"]);
 }
 function autosessionRLWE() {
-	// WARNING: localStorage is used here as the securecookies by the webpage relies on TLS, which is not quantum-safe.
-	// Any XSS or local script can read localStorage, thus breaking the quantum-safe algorithm, so dont get hacked!
+	/*
+	 * WARNING: localStorage is used here as the securecookies by the webpage relies on TLS, which is not quantum-safe.
+	 * Any XSS or local script can read localStorage, thus breaking the quantum-safe algorithm, so dont get hacked!
+	 * To get around this, keys are reset every hour.
+	 */
 	echo '<script src="rlwe-func.js"></script>';
 	echo '<script>
 		if ((new Date()).getTime() - parseInt(localStorage.getItem("keydate")) > ' . $GLOBALS["keyExpireAutoRLWE"] . ') {
@@ -276,18 +279,37 @@ function rlwe_decrypt($str) {
  *
  * Example usage:
  *
- * // client 1
- * $privKey = genPrivateRLWE($privSizeRLWE, $modulusRLWE);
- * $pubKey = genPublicRLWE($privKey, $pubSizeRLWE, $modulusRLWE, $errorRLWE);
- * 
- * // client 2
- * $val = random_int(0, 255);
- * $message = encodeByteRLWE($pubKey, $samplesRLWE, $modulusRLWE, $val);
- * echo "Message: {$val}<br>";
- * 
- * // client 1
- * $recieved = decodeByteRLWE($privKey, $message, $modulusRLWE);
- * echo "Recieved: {$recieved}<br>";
+ * 	// client 1
+ * 	$privKey = genPrivateRLWE($privSizeRLWE, $modulusRLWE);
+ * 	$pubKey = genPublicRLWE($privKey, $pubSizeRLWE, $modulusRLWE, $errorRLWE);
+ * 	
+ * 	// client 2
+ * 	$val = random_int(0, 255);
+ * 	$message = encodeByteRLWE($pubKey, $samplesRLWE, $modulusRLWE, $val);
+ * 	echo "Message: {$val}<br>";
+ * 	
+ * 	// client 1
+ * 	$recieved = decodeByteRLWE($privKey, $message, $modulusRLWE);
+ * 	echo "Recieved: {$recieved}<br>";
+ *
+ * Practical example:
+ *
+ * 	<?php
+ * 	require_once "rlwe.php";
+ * 	session_start();
+ * 	autosessionRLWE();
+ * 	?>
+ * 	
+ * 	This should say 'Hello World!': <span id="decrypt"><?php echo rlwe_encrypt("Hello World!"); ?></span>
+ * 	
+ * 	<script>
+ * 	let obj = document.querySelector("#decrypt");
+ * 	obj.innerHTML = rlwe_decrypt(obj.innerHTML);
+ * 	</script>
+ *
+ * WARNING: localStorage is used here as the securecookies by the webpage relies on TLS, which is not quantum-safe.
+ * Any XSS or local script can read localStorage, thus breaking the quantum-safe algorithm, so dont get hacked!
+ * To get around this, keys are reset every hour.
  *
  */
 
