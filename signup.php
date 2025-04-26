@@ -9,7 +9,7 @@ $username_error = "";
 $password_error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$username = htmlspecialchars($_POST["username"]);
+	$username = strtolower($_POST["username"]);
 	$password = $_POST["password"];
 	$password2 = $_POST["password2"];
 
@@ -19,7 +19,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	else if (strlen($username) > 20) {
 		$username_error = "Username must be less than 20 characters";
 	}
-	else if (mysqli_query($mysqli, "select username from users where username like '{$username}'")->fetch_row()) {
+	else if (preg_match("/[^A-Za-z0-9]/", $username)) {
+		$username_error = "Username must consist of only letters and numbers";
+	}
+	else if (mysqli_query($mysqli, "select username from users where username like '{htmlspecialchars($username)}'")->fetch_row()) {
 		$username_error = "Username already exists";
 	}
 
