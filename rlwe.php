@@ -186,17 +186,24 @@ $pubSizeRLWE = 128;
 $errorRLWE = 8191;
 $samplesRLWE = 16;
 
-// client 1
-$privKey = genPrivateRLWE($privSizeRLWE, $modulusRLWE);
-$pubKey = genPublicRLWE($privKey, $pubSizeRLWE, $modulusRLWE, $errorRLWE);
-
-// client 2
-$val = random_int(0, 255);
-$message = encodeByteRLWE($pubKey, $samplesRLWE, $modulusRLWE, $val);
-echo "Message: {$val}<br>";
-
-// client 1
-$recieved = decodeByteRLWE($privKey, $message, $modulusRLWE);
-echo "Recieved: {$recieved}<br>";
+/*
+ * QKS
+ *
+ * Example usage:
+ *
+ * // client 1
+ * $privKey = genPrivateRLWE($privSizeRLWE, $modulusRLWE);
+ * $pubKey = genPublicRLWE($privKey, $pubSizeRLWE, $modulusRLWE, $errorRLWE);
+ * 
+ * // client 2
+ * $val = random_int(0, 255);
+ * $message = encodeByteRLWE($pubKey, $samplesRLWE, $modulusRLWE, $val);
+ * echo "Message: {$val}<br>";
+ * 
+ * // client 1
+ * $recieved = decodeByteRLWE($privKey, $message, $modulusRLWE);
+ * echo "Recieved: {$recieved}<br>";
+ *
+ */
 
 ?>
