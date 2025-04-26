@@ -155,23 +155,48 @@ function decodeBitRLWE($key, $msg, $mod) {
 
 <?php
 
-$modulus = 524287;
-$privSize = 16;
-$pubSize = 128;
-$error = 8191;
-$samples = 16;
+function encodeByteRLWE($key, $samples, $mod, $msg) {
+	$out = [];
+
+	for ($i = 0; $i < 8; $i++) {
+		$bit = ($msg & (1 << $i)) >> $i;
+		$out[$i] = encodeBitRLWE($key, $samples, $mod, $bit);
+	}
+
+	return $out;
+}
+
+function decodeByteRLWE($key, $msg, $mod) {
+	$out = 0;
+
+	for ($i = 0; $i < 8; $i++) {
+		$out |= decodeBitRLWE($key, $msg[$i], $mod) << $i;
+	}
+
+	return $out;
+}
+
+?>
+
+<?php
+
+$modulusRLWE = 524287;
+$privSizeRLWE = 16;
+$pubSizeRLWE = 128;
+$errorRLWE = 8191;
+$samplesRLWE = 16;
 
 // client 1
-$privKey = genPrivateRLWE($privSize, $modulus);
-$pubKey = genPublicRLWE($privKey, $pubSize, $modulus, $error);
+$privKey = genPrivateRLWE($privSizeRLWE, $modulusRLWE);
+$pubKey = genPublicRLWE($privKey, $pubSizeRLWE, $modulusRLWE, $errorRLWE);
 
 // client 2
-$val = random_int(0, 1);
-$message = encodeBitRLWE($pubKey, $samples, $modulus, $val);
+$val = random_int(0, 255);
+$message = encodeByteRLWE($pubKey, $samplesRLWE, $modulusRLWE, $val);
 echo "Message: {$val}<br>";
 
 // client 1
-$recieved = decodeBitRLWE($privKey, $message, $modulus);
+$recieved = decodeByteRLWE($privKey, $message, $modulusRLWE);
 echo "Recieved: {$recieved}<br>";
 
 ?>
