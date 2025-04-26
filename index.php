@@ -1,5 +1,7 @@
 <?php
+require_once "rlwe.php";
 session_start();
+autosessionRLWE();
 ?>
 
 <!DOCTYPE html>
