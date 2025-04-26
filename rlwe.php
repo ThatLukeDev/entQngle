@@ -265,7 +265,7 @@ function rlwe_cbc($str) { // works once keysharing has occured, basic cbc xor
 
 	for ($i = 0; $i < strlen($str); $i++) {
 		$key = rollkey($key);
-		$out += $str[$i] xor $key[count($key, 0) - 1];
+		$out .= chr(ord($str[$i]) ^ $key[count($key, 0) - 1]);
 	}
 
 	return $out;

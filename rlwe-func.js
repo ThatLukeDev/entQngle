@@ -202,11 +202,11 @@ var rollkey = (rollingKey) => {
 	return rollingKey;
 };
 var rlwe_cbc = (str) => {
-	let tmpkey = key;
+	let tmpkey = key.slice();
 	let out = "";
 	for (let i = 0; i < str.length; i++) {
 		tmpkey = rollkey(tmpkey);
-		out += str[i] ^ tmpkey[tmpkey.length - 1];
+		out += String.fromCharCode(str.charCodeAt(i) ^ tmpkey[tmpkey.length - 1]);
 	}
 
 	return out;
