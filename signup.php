@@ -1,9 +1,9 @@
 <?php
 require_once "config.php";
 
-require_once "rlwe.php";
+require_once "lwe.php";
 session_start();
-autosessionRLWE();
+autosessionLWE();
 
 $username = "";
 $password = "";
@@ -13,9 +13,9 @@ $username_error = "";
 $password_error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$username = strtolower(rlwe_decrypt($_POST["username"]));
-	$password = rlwe_decrypt($_POST["password"]);
-	$password2 = rlwe_decrypt($_POST["password2"]);
+	$username = strtolower(lwe_decrypt($_POST["username"]));
+	$password = lwe_decrypt($_POST["password"]);
+	$password2 = lwe_decrypt($_POST["password2"]);
 
 	if (empty($username)) {
 		$username_error = "Username must not be empty";
@@ -63,13 +63,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	<body>
 		<form id="form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
 			Username<br>
-			<input class="pass" type="text" name="username" value="<?php echo rlwe_encrypt($username); ?>"><br>
+			<input class="pass" type="text" name="username" value="<?php echo lwe_encrypt($username); ?>"><br>
 			<a class="error"><?php echo $username_error; if (!empty($username_error)) echo "<br>"; ?></a><br>
 
 			Password<br>
-			<input class="pass" type="password" name="password" value="<?php echo rlwe_encrypt($password); ?>"><br>
+			<input class="pass" type="password" name="password" value="<?php echo lwe_encrypt($password); ?>"><br>
 			Confirm Password<br>
-			<input class="pass" type="password" name="password2" value="<?php echo rlwe_encrypt($password2); ?>"><br>
+			<input class="pass" type="password" name="password2" value="<?php echo lwe_encrypt($password2); ?>"><br>
 			<a class="error"><?php echo $password_error; if (!empty($password_error)) echo "<br>"; ?></a><br>
 
 			<input type="submit" value="Sign up">
@@ -77,11 +77,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	</body>
 	<script>
 		document.querySelectorAll(".pass").forEach((v) => {
-			v.value = rlwe_decrypt(v.value);
+			v.value = lwe_decrypt(v.value);
 		});
 		document.querySelector("#form").onsubmit = () => {
 			document.querySelectorAll(".pass").forEach((v) => {
-				v.value = rlwe_encrypt(v.value);
+				v.value = lwe_encrypt(v.value);
 			});
 		};
 	</script>

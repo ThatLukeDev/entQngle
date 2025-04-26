@@ -60,17 +60,17 @@ var randInstruction = () => {
 	}
 };
 
-var modulusRLWE = 524287;
-var privSizeRLWE = 16;
-var pubSizeRLWE = 128;
-var errorRLWE = 8191;
-var samplesRLWE = 16;
+var modulusLWE = 524287;
+var privSizeLWE = 16;
+var pubSizeLWE = 128;
+var errorLWE = 8191;
+var samplesLWE = 16;
 
-var genPrivateRLWE = (size, mod) => {
+var genPrivateLWE = (size, mod) => {
 	return randMatrix(size, 1, mod);
 }
 
-var genPublicRLWE = (key, size, mod, error) => {
+var genPublicLWE = (key, size, mod, error) => {
 	let key1 = randMatrix(size, key.length, mod);
 	let key2 = mulMatrix(key1, key);
 	let keyWithErrors = new Int32Array(size);
@@ -89,7 +89,7 @@ var genPublicRLWE = (key, size, mod, error) => {
 	return [key1, Array.from(keyWithErrors)];
 };
 
-var mixPublicRLWE = (key, samples, mod) => {
+var mixPublicLWE = (key, samples, mod) => {
 	let out1 = [[]];
 	let out2 = 0;
 
@@ -114,8 +114,8 @@ var mixPublicRLWE = (key, samples, mod) => {
 	return [ out1, out2 ];
 };
 
-var encodeBitRLWE = (key, samples, mod, bit) => {
-	let mixed = mixPublicRLWE(key, samples, mod);
+var encodeBitLWE = (key, samples, mod, bit) => {
+	let mixed = mixPublicLWE(key, samples, mod);
 	let notmixed = 0;
 
 	if (bit == 1) {
@@ -133,7 +133,7 @@ var encodeBitRLWE = (key, samples, mod, bit) => {
 	return mixed;
 };
 
-var decodeBitRLWE = (key, msg, mod) => {
+var decodeBitLWE = (key, msg, mod) => {
 	let difference = mulMatrix(msg[0], key)[0][0] - msg[1];
 
 	difference += Math.floor(mod / 4);
@@ -147,49 +147,49 @@ var decodeBitRLWE = (key, msg, mod) => {
 	return val;
 };
 
-var encodeByteRLWE = (key, samples, mod, msg) => {
+var encodeByteLWE = (key, samples, mod, msg) => {
 	let out = [];
 
 	for (let i = 0; i < 8; i++) {
 		let bit = (msg & (1 << i)) >> i;
-		out[i] = encodeBitRLWE(key, samples, mod, bit);
+		out[i] = encodeBitLWE(key, samples, mod, bit);
 	}
 
 	return out;
 }
 
-var decodeByteRLWE = (key, msg, mod) => {
+var decodeByteLWE = (key, msg, mod) => {
 	let out = 0;
 
 	for (let i = 0; i < 8; i++) {
-		out |= decodeBitRLWE(key, msg[i], mod) << i;
+		out |= decodeBitLWE(key, msg[i], mod) << i;
 	}
 
 	return out;
 }
 
-var autogenPrivateRLWE = () => {
-	return genPrivateRLWE(privSizeRLWE, modulusRLWE);
+var autogenPrivateLWE = () => {
+	return genPrivateLWE(privSizeLWE, modulusLWE);
 }
 
-var autogenPublicRLWE = (key) => {
-	return genPublicRLWE(key, pubSizeRLWE, modulusRLWE, errorRLWE);
+var autogenPublicLWE = (key) => {
+	return genPublicLWE(key, pubSizeLWE, modulusLWE, errorLWE);
 }
 
-var autoencodeByteRLWE = (pubKey, msg) => {
-	return encodeByteRLWE(pubKey, samplesRLWE, modulusRLWE, msg);
+var autoencodeByteLWE = (pubKey, msg) => {
+	return encodeByteLWE(pubKey, samplesLWE, modulusLWE, msg);
 }
 
-var autodecodeByteRLWE = (privKey, msg) => {
-	return decodeByteRLWE(privKey, msg, modulusRLWE);
+var autodecodeByteLWE = (privKey, msg) => {
+	return decodeByteLWE(privKey, msg, modulusLWE);
 }
 
-var autoencodeStrRLWE = (pubKey, msg) => {
-	return encodeByteRLWE(pubKey, samplesRLWE, modulusRLWE, msg);
+var autoencodeStrLWE = (pubKey, msg) => {
+	return encodeByteLWE(pubKey, samplesLWE, modulusLWE, msg);
 }
 
-var autodecodeStrRLWE = (privKey, msg) => {
-	return decodeByteRLWE(privKey, msg, modulusRLWE);
+var autodecodeStrLWE = (privKey, msg) => {
+	return decodeByteLWE(privKey, msg, modulusLWE);
 }
 
 var rollkey = (rollingKey) => {
@@ -202,7 +202,7 @@ var rollkey = (rollingKey) => {
 
 	return rollingKey;
 };
-var rlwe_cbc = (str) => {
+var lwe_cbc = (str) => {
 	let tmpkey = localStorage.getItem("key").split(",").slice();
 	let out = "";
 	for (let i = 0; i < str.length; i++) {
@@ -212,9 +212,9 @@ var rlwe_cbc = (str) => {
 
 	return out;
 };
-var rlwe_encrypt = (str) => {
-	return btoa(rlwe_cbc(str));
+var lwe_encrypt = (str) => {
+	return btoa(lwe_cbc(str));
 };
-var rlwe_decrypt = (str) => {
-	return rlwe_cbc(atob(str));
+var lwe_decrypt = (str) => {
+	return lwe_cbc(atob(str));
 };

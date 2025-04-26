@@ -76,11 +76,11 @@ function randInstruction() {
 	}
 }
 
-function genPrivateRLWE($size, $mod) {
+function genPrivateLWE($size, $mod) {
 	return randMatrix($size, 1, $mod - 1);
 }
 
-function genPublicRLWE($key, $size, $mod, $error) {
+function genPublicLWE($key, $size, $mod, $error) {
 	$key1 = randMatrix($size, count($key), $mod - 1);
 	$key2 = mulMatrix($key1, $key);
 	$keyWithErrors = [];
@@ -99,7 +99,7 @@ function genPublicRLWE($key, $size, $mod, $error) {
 	return [ $key1, $keyWithErrors ];
 }
 
-function mixPublicRLWE($key, $samples, $mod) {
+function mixPublicLWE($key, $samples, $mod) {
 	$out1 = [[]];
 	$out2 = 0;
 
@@ -119,8 +119,8 @@ function mixPublicRLWE($key, $samples, $mod) {
 	return [ $out1, $out2 ];
 }
 
-function encodeBitRLWE($key, $samples, $mod, $bit) {
-	$mixed = mixPublicRLWE($key, $samples, $mod);
+function encodeBitLWE($key, $samples, $mod, $bit) {
+	$mixed = mixPublicLWE($key, $samples, $mod);
 	$extra = 0;
 
 	if ($bit == 1) {
@@ -138,7 +138,7 @@ function encodeBitRLWE($key, $samples, $mod, $bit) {
 	return $mixed;
 }
 
-function decodeBitRLWE($key, $msg, $mod) {
+function decodeBitLWE($key, $msg, $mod) {
 	$difference = mulMatrix($msg[0], $key)[0][0] - $msg[1];
 
 	$difference += intdiv($mod, 4);
@@ -156,42 +156,42 @@ function decodeBitRLWE($key, $msg, $mod) {
 
 <?php
 
-function encodeByteRLWE($key, $samples, $mod, $msg) {
+function encodeByteLWE($key, $samples, $mod, $msg) {
 	$out = [];
 
 	for ($i = 0; $i < 8; $i++) {
 		$bit = ($msg & (1 << $i)) >> $i;
-		$out[$i] = encodeBitRLWE($key, $samples, $mod, $bit);
+		$out[$i] = encodeBitLWE($key, $samples, $mod, $bit);
 	}
 
 	return $out;
 }
 
-function decodeByteRLWE($key, $msg, $mod) {
+function decodeByteLWE($key, $msg, $mod) {
 	$out = 0;
 
 	for ($i = 0; $i < 8; $i++) {
-		$out |= decodeBitRLWE($key, $msg[$i], $mod) << $i;
+		$out |= decodeBitLWE($key, $msg[$i], $mod) << $i;
 	}
 
 	return $out;
 }
 
-function encodeStrRLWE($key, $samples, $mod, $str) {
+function encodeStrLWE($key, $samples, $mod, $str) {
 	$out = [];
 
 	for ($i = 0; $i < strlen($str); $i++) {
-		$out[$i] = encodeByteRLWE($key, $samples, $mod, ord($str[$i]));
+		$out[$i] = encodeByteLWE($key, $samples, $mod, ord($str[$i]));
 	}
 
 	return $out;
 }
 
-function decodeStrRLWE($key, $msg, $mod) {
+function decodeStrLWE($key, $msg, $mod) {
 	$out = "";
 
 	for ($i = 0; $i < count($msg, 0); $i++) {
-		$out .= chr(decodeByteRLWE($key, $msg[$i], $mod));
+		$out .= chr(decodeByteLWE($key, $msg[$i], $mod));
 	}
 
 	return $out;
@@ -201,40 +201,40 @@ function decodeStrRLWE($key, $msg, $mod) {
 
 <?php
 
-$modulusRLWE = 524287;
-$privSizeRLWE = 16;
-$pubSizeRLWE = 128;
-$errorRLWE = 8191;
-$samplesRLWE = 16;
-$keyExpireAutoRLWE = 60 * 60 * 1000;
+$modulusLWE = 524287;
+$privSizeLWE = 16;
+$pubSizeLWE = 128;
+$errorLWE = 8191;
+$samplesLWE = 16;
+$keyExpireAutoLWE = 60 * 60 * 1000;
 
-function autogenPrivateRLWE() {
-	return genPrivateRLWE($GLOBALS["privSizeRLWE"], $GLOBALS["modulusRLWE"]);
+function autogenPrivateLWE() {
+	return genPrivateLWE($GLOBALS["privSizeLWE"], $GLOBALS["modulusLWE"]);
 }
-function autogenPublicRLWE($privKey) {
-	return genPublicRLWE($privKey, $GLOBALS["pubSizeRLWE"], $GLOBALS["modulusRLWE"], $GLOBALS["errorRLWE"]);
+function autogenPublicLWE($privKey) {
+	return genPublicLWE($privKey, $GLOBALS["pubSizeLWE"], $GLOBALS["modulusLWE"], $GLOBALS["errorLWE"]);
 }
-function autoencodeStrRLWE($pubKey, $str) {
-	return encodeStrRLWE($pubKey, $GLOBALS["samplesRLWE"], $GLOBALS["modulusRLWE"], $str);
+function autoencodeStrLWE($pubKey, $str) {
+	return encodeStrLWE($pubKey, $GLOBALS["samplesLWE"], $GLOBALS["modulusLWE"], $str);
 }
-function autodecodeStrRLWE($privKey, $msg) {
-	return decodeStrRLWE($privKey, $msg, $GLOBALS["modulusRLWE"]);
+function autodecodeStrLWE($privKey, $msg) {
+	return decodeStrLWE($privKey, $msg, $GLOBALS["modulusLWE"]);
 }
-function autosessionRLWE() {
+function autosessionLWE() {
 	/*
 	 * WARNING: localStorage is used here as the securecookies by the webpage relies on TLS, which is not quantum-safe.
 	 * Any XSS or local script can read localStorage, thus breaking the quantum-safe algorithm, so dont get hacked!
 	 * To get around this, keys are reset every hour.
 	 */
-	echo '<script src="rlwe-func.js"></script>';
+	echo '<script src="lwe-func.js"></script>';
 	echo '<script>
-		if (((new Date()).getTime() - parseInt(localStorage.getItem("keydate")) > ' . $GLOBALS["keyExpireAutoRLWE"] . ') || !document.cookie.match(/rlwesessionkey/)) {
+		if (((new Date()).getTime() - parseInt(localStorage.getItem("keydate")) > ' . $GLOBALS["keyExpireAutoLWE"] . ') || !document.cookie.match(/lwesessionkey/)) {
 			localStorage.setItem("key", null);
 			localStorage.setItem("keydate", null);
 		}
 		if (localStorage.getItem("key") == "null") {
-			localStorage.setItem("returnrlweshare", "' . htmlspecialchars($_SERVER["PHP_SELF"]) . '");
-			window.location.href = "rlwe-share.php";
+			localStorage.setItem("returnlweshare", "' . htmlspecialchars($_SERVER["PHP_SELF"]) . '");
+			window.location.href = "lwe-share.php";
 		}
 	</script>';
 }
@@ -253,7 +253,7 @@ function rollkey($acckey) {
 
 	return $key;
 }
-function rlwe_cbc($str) { // works once keysharing has occured, basic cbc xor
+function lwe_cbc($str) { // works once keysharing has occured, basic cbc xor
 	$key = $_SESSION["key"];
 	$out = "";
 
@@ -264,11 +264,11 @@ function rlwe_cbc($str) { // works once keysharing has occured, basic cbc xor
 
 	return $out;
 }
-function rlwe_encrypt($str) {
-	return base64_encode(rlwe_cbc($str));
+function lwe_encrypt($str) {
+	return base64_encode(lwe_cbc($str));
 }
-function rlwe_decrypt($str) {
-	return rlwe_cbc(base64_decode($str));
+function lwe_decrypt($str) {
+	return lwe_cbc(base64_decode($str));
 }
 
 ?>
@@ -281,31 +281,31 @@ function rlwe_decrypt($str) {
  * Example usage:
  *
  * 	// client 1
- * 	$privKey = genPrivateRLWE($privSizeRLWE, $modulusRLWE);
- * 	$pubKey = genPublicRLWE($privKey, $pubSizeRLWE, $modulusRLWE, $errorRLWE);
+ * 	$privKey = genPrivateLWE($privSizeLWE, $modulusLWE);
+ * 	$pubKey = genPublicLWE($privKey, $pubSizeLWE, $modulusLWE, $errorLWE);
  * 	
  * 	// client 2
  * 	$val = random_int(0, 255);
- * 	$message = encodeByteRLWE($pubKey, $samplesRLWE, $modulusRLWE, $val);
+ * 	$message = encodeByteLWE($pubKey, $samplesLWE, $modulusLWE, $val);
  * 	echo "Message: {$val}<br>";
  * 	
  * 	// client 1
- * 	$recieved = decodeByteRLWE($privKey, $message, $modulusRLWE);
+ * 	$recieved = decodeByteLWE($privKey, $message, $modulusLWE);
  * 	echo "Recieved: {$recieved}<br>";
  *
  * Practical example:
  *
  * 	<?php
- * 	require_once "rlwe.php";
+ * 	require_once "lwe.php";
  * 	session_start();
- * 	autosessionRLWE();
+ * 	autosessionLWE();
  * 	?>
  * 	
- * 	This should say 'Hello World!': <span id="decrypt"><?php echo rlwe_encrypt("Hello World!"); ?></span>
+ * 	This should say 'Hello World!': <span id="decrypt"><?php echo lwe_encrypt("Hello World!"); ?></span>
  * 	
  * 	<script>
  * 	let obj = document.querySelector("#decrypt");
- * 	obj.innerHTML = rlwe_decrypt(obj.innerHTML);
+ * 	obj.innerHTML = lwe_decrypt(obj.innerHTML);
  * 	</script>
  *
  * WARNING: localStorage is used here as the securecookies by the webpage relies on TLS, which is not quantum-safe.
