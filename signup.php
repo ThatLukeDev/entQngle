@@ -10,6 +10,8 @@ $password_error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$username = $_POST["username"];
+	$password = $_POST["password"];
+	$password2 = $_POST["password2"];
 
 	if (empty($username)) {
 		$username_error = "Username must not be empty";
@@ -19,6 +21,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	}
 	else if (mysqli_query($mysqli, "select username from users where username like '{$username}'")->fetch_row()) {
 		$username_error = "Username already exists";
+	}
+
+	if (empty($password)) {
+		$password_error = "Password must not be empty";
+	}
+	else if ($password != $password2) {
+		$password_error = "Passwords do not match";
+	}
+
+	if (!$username_error && !$password_error) {
+		header("Location: signin.php");
 	}
 }
 
@@ -37,6 +50,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 			Password<br>
 			<input type="password" name="password" value="<?php echo $password; ?>"><br>
+			Confirm Password<br>
+			<input type="password" name="password2" value="<?php echo $password2; ?>"><br>
 			<a class="error"><?php echo $password_error; if (!empty($password_error)) echo "<br>"; ?></a><br>
 
 			<input type="submit" value="Sign up">
