@@ -23,6 +23,7 @@ function formatMatrix($mat) {
 
 	return $out;
 }
+
 function scaleMatrix($mat, $scalar) {
 	for ($i = 0; $i < count($mat, 0); $i++) {
 		for ($j = 0; $j < count($mat[$i], 0); $j++) {
@@ -32,6 +33,7 @@ function scaleMatrix($mat, $scalar) {
 
 	return $mat;
 }
+
 function mulMatrix($a, $b) {
 	$out = [[]];
 
@@ -45,7 +47,9 @@ function mulMatrix($a, $b) {
 
 	return $out;
 }
+?>
 
+<?php
 $mat1 = randMatrix(2, 2, 9);
 $mat2 = randMatrix(2, 2, 9);
 
