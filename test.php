@@ -68,6 +68,14 @@ function formatVector($vec) {
 
 <?php
 
+function randInstruction() {
+	// mitigate timing-based attacks
+	$sum = 0;
+	for ($i = 0; $i < random_int(0, 16); $i++) {
+		$sum += $i;
+	}
+}
+
 function genPrivateRLWE($size, $mod) {
 	return randMatrix($size, 1, $mod - 1);
 }
@@ -86,26 +94,73 @@ function genPublicRLWE($key, $size, $mod, $error) {
 		$keyWithErrors[$i] %= $mod;
 	}
 
+	randInstruction();
+
 	return [ $key1, $keyWithErrors ];
+}
+
+function mixPublicRLWE($key, $samples, $mod) {
+	$out1 = [[]];
+	$out2 = 0;
+
+	for ($t = 0; $t < $samples; $t++) {
+		// random_int() is cryptographically secure
+		$i = random_int(0, count($key[0], 0));
+		for ($j = 0; $j < count($key[0][0], 0); $j++) {
+			$out1[0][$j] += $key[0][$i][$j];
+			$out1[0][$j] %= $mod;
+		}
+		$out2 += $key[1][$i];
+		$out2 %= $mod;
+	}
+
+	randInstruction();
+
+	return [ $out1, $out2 ];
+}
+
+function encodeBitRLWE($key, $samples, $mod, $bit) {
+	$mixed = mixPublicRLWE($key, $samples, $mod);
+
+	if ($bit == 1) {
+		$mixed[1] += intdiv($mod, 2);
+		$mixed[1] %= $mod;
+	}
+	else  {
+		// helps further with timing based attacks
+		$extra += intdiv($mod, 2);
+		$extra %= $mod;
+	}
+
+	randInstruction();
+
+	return $mixed;
 }
 
 ?>
 
 <?php
 
-$modulus = 10;
+$modulus = 100;//32633;
 $privSize = 2;
-$pubSize = 3;
+$pubSize = 100;
 $error = 1;
+$samples = 2;
 
+// client 1
 $privKey = genPrivateRLWE($privSize, $modulus);
 $pubKey = genPublicRLWE($privKey, $pubSize, $modulus, $error);
 
 echo "Private:<br>";
 echo formatMatrix($privKey);
-echo "Public:<br>";
-echo formatMatrix($pubKey[0]);
-echo "Untrue:<br>";
-echo formatVector($pubKey[1]);
+
+// client 2
+$val = random_int(0, 1);
+$message = encodeBitRLWE($pubKey, $samples, $modulus, $val);
+echo "Message ({$val}):<br>";
+echo formatMatrix($message[0]);
+echo $message[1];
+
+// client 1
 
 ?>
