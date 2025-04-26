@@ -36,7 +36,7 @@ else {
 					let message = autodecodeByteRLWE(privKey, encoded[i]);
 					key[i] = message;
 				}
-				sessionStorage.setItem('key', key);
+				localStorage.setItem('key', key);
 			}
 		};
 		xhttp.send('pubkeyrlwe='+btoa(JSON.stringify(pubKey)));

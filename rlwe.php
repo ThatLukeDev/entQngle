@@ -220,7 +220,9 @@ function autodecodeStrRLWE($privKey, $msg) {
 }
 function autosessionRLWE() {
 	echo '<script src="rlwe-func.js"></script>';
-	echo '<script> var pubKeyRLWE = JSON.parse(atob("' . base64_encode(json_encode($_SESSION["pubKey"])) . '")); </script>';
+	echo '<script>
+		sessionStorage.setItem("return", "' . htmlspecialchars($_SERVER["PHP_SELF"]) . '");
+	</script>';
 }
 
 function rollkey($key) {

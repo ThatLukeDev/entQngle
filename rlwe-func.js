@@ -203,7 +203,7 @@ var rollkey = (rollingKey) => {
 	return rollingKey;
 };
 var rlwe_cbc = (str) => {
-	let tmpkey = sessionStorage.getItem("key").slice();
+	let tmpkey = localStorage.getItem("key").slice();
 	let out = "";
 	for (let i = 0; i < str.length; i++) {
 		tmpkey = rollkey(tmpkey);
