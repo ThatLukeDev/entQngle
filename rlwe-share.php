@@ -38,6 +38,7 @@ else {
 				}
 				localStorage.setItem('key', key);
 				localStorage.setItem('keydate', (new Date()).getTime());
+				document.cookie = 'rlwesessionkey=true';
 				window.location.href = localStorage.getItem('returnrlweshare');
 			}
 		};

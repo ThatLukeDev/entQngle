@@ -227,7 +227,7 @@ function autosessionRLWE() {
 	 */
 	echo '<script src="rlwe-func.js"></script>';
 	echo '<script>
-		if ((new Date()).getTime() - parseInt(localStorage.getItem("keydate")) > ' . $GLOBALS["keyExpireAutoRLWE"] . ') {
+		if (((new Date()).getTime() - parseInt(localStorage.getItem("keydate")) > ' . $GLOBALS["keyExpireAutoRLWE"] . ') || !document.cookie.match(/rlwesessionkey/)) {
 			localStorage.setItem("key", null);
 			localStorage.setItem("keydate", null);
 		}
