@@ -45,13 +45,14 @@ var formatVector = (vec) => {
 	let out = "";
 
 	for (let i = 0; i < vec.length; i++) {
-		out += vec[i] + ("&nbsp;".repeat(15 - vec[i].toString().length));
+		let spaces = 15 - vec[i].toString().length;
+		out += vec[i] + ("&nbsp;".repeat(spaces > 0 ? spaces : 0));
 	}
 
 	return out;
 };
 
-var randomInstruction = () => {
+var randInstruction = () => {
 	let sum = 0;
 	for (let i = 0; i < Math.floor(Math.random() * 16); i++) {
 		sum += i;
@@ -76,13 +77,40 @@ var genPublicRLWE = (key, size, mod, error) => {
 
 	for (let i = 0; i < size; i++) {
 		keyWithErrors[i] %= error;
-		keyWithErrors[i] += key2[i][0]
+		keyWithErrors[i] += key2[i][0] % mod;
 		keyWithErrors[i] %= mod;
 		keyWithErrors[i] += mod;
 		keyWithErrors[i] %= mod;
 	}
 
+	randInstruction();
+
 	return [key1, keyWithErrors];
+};
+
+var mixPublicRLWE = (key, samples, mod) => {
+	let out1 = [[]];
+	let out2 = 0;
+
+	for (let j = 0; j < key[0][0].length; j++) {
+		out1[0][j] = 0;
+	}
+	for (let t = 0; t < samples; t++) {
+		let rnd = new Uint32Array(1);
+		self.crypto.getRandomValues(rnd);
+		rnd[0] %= key[0].length;
+		let i = rnd[0];
+		for (let j = 0; j < key[0][0].length; j++) {
+			out1[0][j] += key[0][i][j];
+			out1[0][j] %= mod;
+		}
+		out2 += key[1][i];
+		out2 %= mod;
+	}
+
+	randInstruction();
+
+	return [ out1, out2 ];
 };
 
 var autogenPrivateRLWE = () => {

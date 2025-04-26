@@ -24,14 +24,16 @@ echo "Recieved: {$recieved}<br>";
 
 let privKey = autogenPrivateRLWE();
 let pubKey = autogenPublicRLWE(privKey);
+let mixed = mixPublicRLWE(pubKey, 16, modulusRLWE);
 
 document.querySelector("body").innerHTML += "<br>Private<br>";
 document.querySelector("body").innerHTML += formatMatrix(privKey);
 
-document.querySelector("body").innerHTML += "<br>Public<br>";
-document.querySelector("body").innerHTML += formatMatrix(pubKey[0]);
-
+document.querySelector("body").innerHTML += "<br>Mixed<br>";
+document.querySelector("body").innerHTML += formatMatrix(mixed[0]);
 document.querySelector("body").innerHTML += "<br>Errored<br>";
-document.querySelector("body").innerHTML += formatVector(pubKey[1]);
+document.querySelector("body").innerHTML += mixed[1];
+document.querySelector("body").innerHTML += "<br>True<br>";
+document.querySelector("body").innerHTML += mulMatrix(mixed[0], privKey)[0][0] % modulusRLWE;
 
 </script>
