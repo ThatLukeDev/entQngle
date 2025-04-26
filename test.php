@@ -137,30 +137,41 @@ function encodeBitRLWE($key, $samples, $mod, $bit) {
 	return $mixed;
 }
 
+function decodeBitRLWE($key, $msg, $mod) {
+	$difference = mulMatrix($msg[0], $key)[0][0] - $msg[1];
+
+	$difference += intdiv($mod, 4);
+	$difference %= $mod;
+
+	$val = 0;
+	if ($difference > intdiv($mod, 2)) {
+		$val = 1;
+	}
+
+	return $val;
+}
+
 ?>
 
 <?php
 
-$modulus = 100;//32633;
-$privSize = 2;
-$pubSize = 100;
-$error = 1;
-$samples = 2;
+$modulus = 524287;
+$privSize = 16;
+$pubSize = 128;
+$error = 8191;
+$samples = 16;
 
 // client 1
 $privKey = genPrivateRLWE($privSize, $modulus);
 $pubKey = genPublicRLWE($privKey, $pubSize, $modulus, $error);
 
-echo "Private:<br>";
-echo formatMatrix($privKey);
-
 // client 2
 $val = random_int(0, 1);
 $message = encodeBitRLWE($pubKey, $samples, $modulus, $val);
-echo "Message ({$val}):<br>";
-echo formatMatrix($message[0]);
-echo $message[1];
+echo "Message: {$val}<br>";
 
 // client 1
+$recieved = decodeBitRLWE($privKey, $message, $modulus);
+echo "Recieved: {$recieved}<br>";
 
 ?>
