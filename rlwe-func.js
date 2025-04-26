@@ -7,6 +7,7 @@ var randMatrix = (row, col, max) => {
 		for (let j = 0; j < col; j++) {
 			out[i][j] %= max;
 		}
+		out[i] = Array.from(out[i]);
 	}
 
 	return out;
@@ -85,7 +86,7 @@ var genPublicRLWE = (key, size, mod, error) => {
 
 	randInstruction();
 
-	return [key1, keyWithErrors];
+	return [key1, Array.from(keyWithErrors)];
 };
 
 var mixPublicRLWE = (key, samples, mod) => {
@@ -202,7 +203,7 @@ var rollkey = (rollingKey) => {
 	return rollingKey;
 };
 var rlwe_cbc = (str) => {
-	let tmpkey = key.slice();
+	let tmpkey = sessionStorage.getItem("key").slice();
 	let out = "";
 	for (let i = 0; i < str.length; i++) {
 		tmpkey = rollkey(tmpkey);

@@ -219,32 +219,8 @@ function autodecodeStrRLWE($privKey, $msg) {
 	return decodeStrRLWE($privKey, $msg, $GLOBALS["modulusRLWE"]);
 }
 function autosessionRLWE() {
-	if ($_POST["keyrlwe"]) {
-		$contents = json_decode(base64_decode($_POST["keyrlwe"]));
-		$key = [];
-		for ($i = 0; $i < count($contents, 0); $i++) {
-			$key[$i] = decodeByteRLWE($_SESSION["privKey"], $contents[$i], $GLOBALS["modulusRLWE"]);
-		}
-		$_SESSION["key"] = $key;
-	}
-	else {
-		$_SESSION["privKey"] = autogenPrivateRLWE();
-		$_SESSION["pubKey"] = autogenPublicRLWE($_SESSION["privKey"]);
-	}
 	echo '<script src="rlwe-func.js"></script>';
 	echo '<script> var pubKeyRLWE = JSON.parse(atob("' . base64_encode(json_encode($_SESSION["pubKey"])) . '")); </script>';
-	echo "<script>
-		var key = new Uint8Array(32);
-		self.crypto.getRandomValues(key);
-		let message = [];
-		for (let i = 0; i < key.length; i++) {
-			message[i] = autoencodeByteRLWE(pubKeyRLWE, key[i]);
-		}
-		let xhttp = new XMLHttpRequest();
-		xhttp.open('POST', '" . htmlspecialchars($_SERVER["PHP_SELF"]) . "', true);
-		xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-		xhttp.send('keyrlwe='+btoa(JSON.stringify(message)));
-	</script>";
 }
 
 function rollkey($key) {
