@@ -176,6 +176,26 @@ function decodeByteRLWE($key, $msg, $mod) {
 	return $out;
 }
 
+function encodeStrRLWE($key, $samples, $mod, $str) {
+	$out = [];
+
+	for ($i = 0; $i < strlen($str); $i++) {
+		$out[i] = encodeByteRLWE($key, $samples, $mod, ord($str[i]));
+	}
+
+	return $out;
+}
+
+function decodeStrRLWE($key, $msg, $mod) {
+	$out = "";
+
+	for ($i = 0; $i < count($msg, 0); $i++) {
+		$out .= chr(decodeByteRLWE($key, $msg[i], $mod));
+	}
+
+	return $out;
+}
+
 ?>
 
 <?php
@@ -185,6 +205,23 @@ $privSizeRLWE = 16;
 $pubSizeRLWE = 128;
 $errorRLWE = 8191;
 $samplesRLWE = 16;
+
+function autogenPrivateRLWE() {
+	return genPrivateRLWE($GLOBALS["privSizeRLWE"], $GLOBALS["modulusRLWE"]);
+}
+function autogenPublicRLWE($privKey) {
+	return genPublicRLWE($privKey, $GLOBALS["pubSizeRLWE"], $GLOBALS["modulusRLWE"], $GLOBALS["errorRLWE"]);
+}
+function autoencodeStrRLWE($pubKey, $str) {
+	return encodeStrRLWE($pubKey, $GLOBALS["samplesRLWE"], $GLOBALS["modulusRLWE"], $str);
+}
+function autodecodeStrRLWE($privKey, $msg) {
+	return decodeStrRLWE($privKey, $msg, $GLOBALS["modulusRLWE"]);
+}
+
+?>
+
+<?php
 
 /*
  * QKS

@@ -182,3 +182,11 @@ var autoencodeByteRLWE = (pubKey, msg) => {
 var autodecodeByteRLWE = (privKey, msg) => {
 	return decodeByteRLWE(privKey, msg, modulusRLWE);
 }
+
+var autoencodeStrRLWE = (pubKey, msg) => {
+	return encodeByteRLWE(pubKey, samplesRLWE, modulusRLWE, msg);
+}
+
+var autodecodeStrRLWE = (privKey, msg) => {
+	return decodeByteRLWE(privKey, msg, modulusRLWE);
+}
