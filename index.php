@@ -16,11 +16,15 @@ session_start();
 		?>
 	</body>
 	<script>
-		document.querySelector("#signin").onclick = () => {
-			document.location.href = "signin.php";
-		};
-		document.querySelector("#signup").onclick = () => {
-			document.location.href = "signup.php";
-		};
+		<?php
+			if (!isset($_SESSION["username"])) echo "
+				document.querySelector('#signin').onclick = () => {
+					document.location.href = 'signin.php';
+				};
+				document.querySelector('#signup').onclick = () => {
+					document.location.href = 'signup.php';
+				};
+			";
+		?>
 	</script>
 </html>
