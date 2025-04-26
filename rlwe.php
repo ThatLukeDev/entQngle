@@ -247,6 +247,35 @@ function autosessionRLWE() {
 	</script>";
 }
 
+function rollkey($key) {
+	$len = count($key, 0);
+
+	$hash = 0;
+	for ($i = 0; $i < $len - 1; $i++) {
+		$hash += $key[$i];
+		$key[$i] = $key[$i + 1];
+	}
+	$key[$len - 1] = $hash % 256;
+
+	return $key;
+}
+function rlwe_cbc($str) { // works once keysharing has occured, basic cbc xor
+	$key = $_SESSION["key"];
+
+	for ($i = 0; $i < strlen($str); $i++) {
+		$key = rollkey($key);
+		$str[$i] = $str[$i] xor $key[count($key, 0) - 1];
+	}
+
+	return $str;
+}
+function rlwe_encrypt($str) {
+	return base64_encode(rlwe_cbc($str));
+}
+function rlwe_decrypt($str) {
+	return rlwe_cbc(base64_decode($str));
+}
+
 ?>
 
 <?php

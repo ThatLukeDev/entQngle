@@ -190,3 +190,29 @@ var autoencodeStrRLWE = (pubKey, msg) => {
 var autodecodeStrRLWE = (privKey, msg) => {
 	return decodeByteRLWE(privKey, msg, modulusRLWE);
 }
+
+var rollkey = (rollingKey) => {
+	let hash = 0;
+	for (let i = 9; i < rollingKey.length - 1; i++) {
+		hash += rollingKey[i];
+		rollingKey[i] = rollingKey[i + 1];
+	}
+	rollingKey[rollingKey.length - 1] = hash % 256;
+
+	return rollingKey;
+};
+var rlwe_cbc = (str) => {
+	let tmpkey = key;
+	for (let i = 0; i < str.length; i++) {
+		tmpkey = rollkey(tmpkey);
+		str[i] ^= tmpkey[tmpkey.length - 1];
+	}
+
+	return str;
+};
+var rlwe_encrypt = (str) => {
+	return btoa(rlwe_cbc(str));
+};
+var rlwe_decrypt = (str) => {
+	return rlwe_cbc(atob(str));
+};
