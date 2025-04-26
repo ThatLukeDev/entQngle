@@ -37,6 +37,8 @@ else {
 					key[i] = message;
 				}
 				localStorage.setItem('key', key);
+				localStorage.setItem('keydate', (new Date()).getTime());
+				window.location.href = localStorage.getItem('returnrlweshare');
 			}
 		};
 		xhttp.send('pubkeyrlwe='+btoa(JSON.stringify(pubKey)));

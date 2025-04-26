@@ -205,6 +205,7 @@ $privSizeRLWE = 16;
 $pubSizeRLWE = 128;
 $errorRLWE = 8191;
 $samplesRLWE = 16;
+$keyExpireAutoRLWE = 60 * 60 * 1000;
 
 function autogenPrivateRLWE() {
 	return genPrivateRLWE($GLOBALS["privSizeRLWE"], $GLOBALS["modulusRLWE"]);
@@ -221,7 +222,14 @@ function autodecodeStrRLWE($privKey, $msg) {
 function autosessionRLWE() {
 	echo '<script src="rlwe-func.js"></script>';
 	echo '<script>
-		sessionStorage.setItem("return", "' . htmlspecialchars($_SERVER["PHP_SELF"]) . '");
+		if ((new Date()).getTime() - parseInt(localStorage.getItem("keydate")) > ' . $GLOBALS["keyExpireAutoRLWE"] . ') {
+			localStorage.setItem("key", null);
+			localStorage.setItem("keydate", null);
+		}
+		if (localStorage.getItem("key") == "null") {
+			localStorage.setItem("returnrlweshare", "' . htmlspecialchars($_SERVER["PHP_SELF"]) . '");
+			window.location.href = "rlwe-share.php";
+		}
 	</script>';
 }
 
