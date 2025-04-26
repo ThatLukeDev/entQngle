@@ -203,12 +203,13 @@ var rollkey = (rollingKey) => {
 };
 var rlwe_cbc = (str) => {
 	let tmpkey = key;
+	let out = "";
 	for (let i = 0; i < str.length; i++) {
 		tmpkey = rollkey(tmpkey);
-		str[i] ^= tmpkey[tmpkey.length - 1];
+		out += str[i] ^ tmpkey[tmpkey.length - 1];
 	}
 
-	return str;
+	return out;
 };
 var rlwe_encrypt = (str) => {
 	return btoa(rlwe_cbc(str));

@@ -261,13 +261,14 @@ function rollkey($key) {
 }
 function rlwe_cbc($str) { // works once keysharing has occured, basic cbc xor
 	$key = $_SESSION["key"];
+	$out = "";
 
 	for ($i = 0; $i < strlen($str); $i++) {
 		$key = rollkey($key);
-		$str[$i] = $str[$i] xor $key[count($key, 0) - 1];
+		$out += $str[$i] xor $key[count($key, 0) - 1];
 	}
 
-	return $str;
+	return $out;
 }
 function rlwe_encrypt($str) {
 	return base64_encode(rlwe_cbc($str));
