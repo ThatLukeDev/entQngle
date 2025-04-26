@@ -23,7 +23,34 @@ function formatMatrix($mat) {
 
 	return $out;
 }
+function scaleMatrix($mat, $scalar) {
+	for ($i = 0; $i < count($mat, 0); $i++) {
+		for ($j = 0; $j < count($mat[$i], 0); $j++) {
+			$mat[$i][$j] *= $scalar;
+		}
+	}
 
-$mat = randMatrix(4, 4, 9);
-echo formatMatrix($mat);
+	return $mat;
+}
+function mulMatrix($a, $b) {
+	$out = [[]];
+
+	for ($i = 0; $i < count($a, 0); $i++) {
+		for ($j = 0; $j < count($b[$i], 0); $j++) {
+			for ($k = 0; $k < count($b); $k++) {
+				$out[$i][$j] += $a[$i][$k] * $b[$k][$j];
+			}
+		}
+	}
+
+	return $out;
+}
+
+$mat1 = randMatrix(2, 2, 9);
+$mat2 = randMatrix(2, 2, 9);
+
+echo formatMatrix($mat1);
+echo formatMatrix($mat2);
+
+echo formatMatrix(mulMatrix($mat1, $mat2));
 ?>
