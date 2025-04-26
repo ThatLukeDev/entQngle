@@ -24,16 +24,12 @@ echo "Recieved: {$recieved}<br>";
 
 let privKey = autogenPrivateRLWE();
 let pubKey = autogenPublicRLWE(privKey);
-let mixed = mixPublicRLWE(pubKey, 16, modulusRLWE);
 
-document.querySelector("body").innerHTML += "<br>Private<br>";
-document.querySelector("body").innerHTML += formatMatrix(privKey);
+let val = Math.floor(Math.random() * 2);
+let encoded = encodeBitRLWE(pubKey, 16, modulusRLWE, val);
+let decoded = decodeBitRLWE(privKey, encoded, modulusRLWE);
 
-document.querySelector("body").innerHTML += "<br>Mixed<br>";
-document.querySelector("body").innerHTML += formatMatrix(mixed[0]);
-document.querySelector("body").innerHTML += "<br>Errored<br>";
-document.querySelector("body").innerHTML += mixed[1];
-document.querySelector("body").innerHTML += "<br>True<br>";
-document.querySelector("body").innerHTML += mulMatrix(mixed[0], privKey)[0][0] % modulusRLWE;
+document.querySelector("body").innerHTML += `<br>Sent ${val}`;
+document.querySelector("body").innerHTML += `<br>Recieved ${decoded}`;
 
 </script>

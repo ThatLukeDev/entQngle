@@ -113,6 +113,39 @@ var mixPublicRLWE = (key, samples, mod) => {
 	return [ out1, out2 ];
 };
 
+var encodeBitRLWE = (key, samples, mod, bit) => {
+	let mixed = mixPublicRLWE(key, samples, mod);
+	let notmixed = 0;
+
+	if (bit == 1) {
+		mixed[1] += Math.floor(mod / 2);
+		mixed[1] %= mod;
+	}
+	else {
+		// timing based attacks
+		notmixed += Math.floor(mod / 2);
+		notmixed %= mod;
+	}
+
+	randInstruction();
+
+	return mixed;
+};
+
+var decodeBitRLWE = (key, msg, mod) => {
+	let difference = mulMatrix(msg[0], key)[0][0] - msg[1];
+
+	difference += Math.floor(mod / 4);
+	difference %= mod;
+
+	let val = 0;
+	if (difference > Math.floor(mod / 2)) {
+		val = 1;
+	}
+
+	return val;
+};
+
 var autogenPrivateRLWE = () => {
 	return genPrivateRLWE(privSizeRLWE, modulusRLWE);
 }
