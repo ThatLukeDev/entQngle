@@ -225,7 +225,9 @@ function autosessionRLWE() {
 	</script>';
 }
 
-function rollkey($key) {
+function rollkey($acckey) {
+	$key = $acckey;
+
 	$len = count($key, 0);
 
 	$hash = 0;

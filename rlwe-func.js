@@ -194,8 +194,8 @@ var autodecodeStrRLWE = (privKey, msg) => {
 
 var rollkey = (rollingKey) => {
 	let hash = 0;
-	for (let i = 9; i < rollingKey.length - 1; i++) {
-		hash += rollingKey[i];
+	for (let i = 0; i < rollingKey.length - 1; i++) {
+		hash += parseInt(rollingKey[i]);
 		rollingKey[i] = rollingKey[i + 1];
 	}
 	rollingKey[rollingKey.length - 1] = hash % 256;
@@ -203,10 +203,10 @@ var rollkey = (rollingKey) => {
 	return rollingKey;
 };
 var rlwe_cbc = (str) => {
-	let tmpkey = localStorage.getItem("key").slice();
+	let tmpkey = localStorage.getItem("key").split(",").slice();
 	let out = "";
 	for (let i = 0; i < str.length; i++) {
-		tmpkey = rollkey(tmpkey);
+		tmpkey = rollkey(tmpkey.slice());
 		out += String.fromCharCode(str.charCodeAt(i) ^ tmpkey[tmpkey.length - 1]);
 	}
 
