@@ -26,8 +26,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	else if (preg_match("/[^A-Za-z0-9]/", $username)) {
 		$username_error = "Username must consist of only letters and numbers";
 	}
-	else if (mysqli_query($mysqli, "select username from users where username like '".htmlspecialchars($username)."'")->fetch_row()) {
-		$username_error = "Username already exists";
+	else {
+		$stmt = $mysqli->prepare("select username from users where username = ?");
+		$stmt->bind_param("s", $username);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		if ($result->fetch_row()) {
+			$username_error = "Username already exists";
+		}
 	}
 
 	if (empty($password)) {
@@ -39,7 +45,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 	if (!$username_error && !$password_error) {
 		$password_hash = password_hash($password, PASSWORD_DEFAULT);
-		mysqli_query($mysqli, "insert into users values ('".htmlspecialchars($username)."', '".$password_hash."')");
+		$stmt = $mysqli->prepare("insert into users values (?, ?)");
+		$stmt->bind_param("ss", $username, $password_hash);
+		$stmt->execute();
 
 		header("Location: signin.php");
 	}

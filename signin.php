@@ -13,7 +13,11 @@ $error = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	$username = strtolower(rlwe_decrypt($_POST["username"]));
 	$password = rlwe_decrypt($_POST["password"]);
-	$password_hash = mysqli_query($mysqli, "select password from users where username like '".htmlspecialchars($username)."'")->fetch_row()[0];
+	$stmt = $mysqli->prepare("select password from users where username = ?");
+	$stmt->bind_param("s", $username);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	$password_hash = $result->fetch_row()[0];
 	if (!$password_hash) {
 		$error = "User does not exist";
 	}
