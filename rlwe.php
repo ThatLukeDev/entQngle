@@ -85,6 +85,24 @@ function polyMod($eqn, $div) {
 	return polyTrim($modulus);
 }
 
+function polyRand($n, $max) {
+	$out = [];
+
+	for ($i = 0; $i <= $n; $i++) {
+		$out[$i] = random_int(-$max, $max);
+	}
+
+	return $out;
+}
+
+?>
+
+<?php
+
+$modulusRLWE = 25601;
+$keysizeRLWE = 512;
+$ringRLWE = polyAdd(polyPower([1], $keysizeRLWE), [1]);
+
 ?>
 
 <?php
@@ -100,7 +118,6 @@ function polyDisplay($a) {
 
 <?php
 
-polyDisplay(polyMod([1, 2, 1], [1, 1]));
-polyDisplay(polyMod([-4, 0, -2, 1], [-3, 1]));
+polyDisplay(polyRand(4, 20));
 
 ?>
