@@ -32,6 +32,23 @@ function polyMul($a, $b) {
 	return $out;
 }
 
+function polyTrim($a) {
+	$out = [];
+	$last = 0;
+
+	for ($i = 0; $i < count($a); $i++) {
+		if ($a[$i] != 0) {
+			$last = $i + 1;
+		}
+	}
+
+	for ($i = 0; $i < $last; $i++) {
+		$out[$i] = $a[$i];
+	}
+
+	return $out;
+}
+
 ?>
 
 <?php
@@ -46,6 +63,6 @@ function polyDisplay($a) {
 
 <?php
 
-polyDisplay(polyMul([1, 2], [1, 3]));
+polyDisplay(polyTrim([1, 2, 4, 0, 2, 0, 0]));
 
 ?>
