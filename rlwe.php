@@ -129,9 +129,30 @@ function samplePolyRLWE() {
 	return $out;
 }
 
+function initRLWE() { // returns in the form [a, p, s, e]
+	$a = polyMod(polyRand($GLOBALS["keysizeRLWE"], $GLOBALS["modulusRLWE"]), $GLOBALS["ringRLWE"]);
+
+	$s = samplePolyRLWE();
+	$e = samplePolyRLWE();
+
+	$p = polyMod(polyAdd(polyMul($a, $s), polyMul($e, [2])), $GLOBALS["ringRLWE"]);
+
+	return [$a, $p, $s, $e];
+}
+
 ?>
 
 <?php
 
+$init = initRLWE();
+
+polyDisplay($init[0]);
+echo "<br><br>";
+polyDisplay($init[1]);
+echo "<br><br>";
+polyDisplay($init[2]);
+echo "<br><br>";
+polyDisplay($init[3]);
+echo "<br><br>";
 
 ?>
