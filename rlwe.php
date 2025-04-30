@@ -85,6 +85,26 @@ function polyMod($eqn, $div) {
 	return polyTrim($modulus);
 }
 
+function primitivenunity($n, $mod) {
+	for ($root = 0; $root < $mod; $root++) {
+		if (($root ** $n) % $mod == 1) {
+			$taken = false;
+			for ($k = 1; $k < $n; $k++) {
+				if (($root ** $k) % $mod == 1) {
+					$taken = true;
+				}
+			}
+			if (!$taken) {
+				return $root;
+			}
+		}
+	}
+	return -1;
+}
+
+function ntt() {
+}
+
 function polyRand($n, $max) {
 	$out = [];
 
@@ -144,6 +164,9 @@ function initRLWE() { // returns in the form [a, p, s, e]
 
 <?php
 
+echo primitivenunity(4, 7681);
+
+/*
 $init = initRLWE();
 
 polyDisplay($init[0]);
@@ -154,5 +177,6 @@ polyDisplay($init[2]);
 echo "<br><br>";
 polyDisplay($init[3]);
 echo "<br><br>";
+ */
 
 ?>
