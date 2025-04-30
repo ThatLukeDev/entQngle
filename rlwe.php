@@ -85,12 +85,23 @@ function polyMod($eqn, $div) {
 	return polyTrim($modulus);
 }
 
+function modPow($x, $y, $mod) {
+	$working = $x;
+
+	for ($i = 1; $i < $y; $i++) {
+		$working *= $x;
+		$working %= $mod;
+	}
+
+	return $working;
+}
+
 function primitivenunity($n, $mod) {
 	for ($root = 0; $root < $mod; $root++) {
-		if (($root ** $n) % $mod == 1) {
+		if (modPow($root, $n, $mod) == 1) {
 			$taken = false;
 			for ($k = 1; $k < $n; $k++) {
-				if (($root ** $k) % $mod == 1) {
+				if (modPow($root, $k, $mod) == 1) {
 					$taken = true;
 				}
 			}
@@ -165,6 +176,8 @@ function initRLWE() { // returns in the form [a, p, s, e]
 <?php
 
 echo primitivenunity(4, 7681);
+echo "<br>";
+echo primitivenunity($GLOBALS["keysizeRLWE"], $GLOBALS["modulusRLWE"]);
 
 /*
 $init = initRLWE();
