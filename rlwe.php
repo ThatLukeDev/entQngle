@@ -161,16 +161,39 @@ $ring2NunityRLWE = primitive2nunity($keysizeRLWE, $modulusRLWE);
 
 <?php
 
-function ntt($in) {
+function basentt($in, $n2unity, $mod, $rebase) {
 	$out = [];
 
 	for ($j = 0; $j < count($in); $j++) {
-		for ($i = 0; $i < $GLOBALS["keysizeRLWE"]; $i++) {
-			$out[$j] += modPow($GLOBALS["ring2NunityRLWE"], 2 * $i * $j + $i, $GLOBALS["modulusRLWE"]) * $in[$i];
-			$out[$j] %= $GLOBALS["modulusRLWE"];
+		for ($i = 0; $i < count($in); $i++) {
+			$out[$j] += modPow($n2unity, 2 * $i * $j + $i * (1 - $rebase) + $j * $rebase, $mod) * $in[$i];
+			$out[$j] %= $mod;
 		}
 	}
 
+	return $out;
+}
+
+function inverseModulus($val, $mod) {
+	for ($i = 1; $i < $mod; $i++) {
+		if (($i * $val) % $mod == 1) {
+			return $i;
+		}
+	}
+	return -1;
+}
+
+function nttRLWE($in) {
+	return basentt($in, $GLOBALS["ring2NunityRLWE"], $GLOBALS["modulusRLWE"], 0);
+}
+
+function inttRLWE($in) {
+	$out = basentt($in, inverseModulus($GLOBALS["ring2NunityRLWE"], $GLOBALS["modulusRLWE"]), $GLOBALS["modulusRLWE"], 1);
+	$inverse = inverseModulus($GLOBALS["keysizeRLWE"], $GLOBALS["modulusRLWE"]);
+	for ($i = 0; $i < count($out); $i++) {
+		$out[$i] *= $inverse;
+		$out[$i] %= $GLOBALS["modulusRLWE"];
+	}
 	return $out;
 }
 
@@ -203,7 +226,8 @@ function initRLWE() { // returns in the form [a, p, s, e]
 
 <?php
 
-polyDisplay(ntt([1, 2, 3, 4]));
+polyDisplay(nttRLWE([1, 2, 3, 4]));
+polyDisplay(inttRLWE(nttRLWE([1, 2, 3, 4])));
 
 /*
 $init = initRLWE();
