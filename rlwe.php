@@ -151,10 +151,12 @@ function polyDisplay($a) {
 
 <?php
 
-$modulusRLWE = 25601;
-$keysizeRLWE = 512;
+$modulusRLWE = 7681;
+$keysizeRLWE = 4;
 $sampleBoundRLWE = 5;
 $ringRLWE = polyAdd(polyPower([1], $keysizeRLWE), [1]);
+$ringNunity = primitivenunity($keysizeRLWE, $modulusRLWE);
+$ring2Nunity = primitive2nunity($keysizeRLWE, $modulusRLWE);
 
 ?>
 
@@ -185,9 +187,8 @@ function initRLWE() { // returns in the form [a, p, s, e]
 
 <?php
 
-echo primitivenunity(4, 7681);
-echo "<br>";
-echo primitive2nunity(4, 7681);
+echo $GLOBALS["ringNunity"] . "<br>";
+echo $GLOBALS["ring2Nunity"] . "<br>";
 
 /*
 $init = initRLWE();
