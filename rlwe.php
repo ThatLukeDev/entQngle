@@ -113,6 +113,16 @@ function primitivenunity($n, $mod) {
 	return -1;
 }
 
+function primitive2nunity($n, $mod) {
+	$nthunity = primitivenunity($n, $mod);
+	for ($root = 0; $root < $mod; $root++) {
+		if (modPow($root, 2, $mod) == $nthunity && modPow($root, $n, $mod) == $mod - 1) {
+			return $root;
+		}
+	}
+	return -1;
+}
+
 function ntt() {
 }
 
@@ -177,7 +187,7 @@ function initRLWE() { // returns in the form [a, p, s, e]
 
 echo primitivenunity(4, 7681);
 echo "<br>";
-echo primitivenunity($GLOBALS["keysizeRLWE"], $GLOBALS["modulusRLWE"]);
+echo primitive2nunity(4, 7681);
 
 /*
 $init = initRLWE();
