@@ -86,6 +86,9 @@ function polyMod($eqn, $div) {
 }
 
 function modPow($x, $y, $mod) {
+	if ($y == 0) {
+		return 1;
+	}
 	$working = $x;
 
 	for ($i = 1; $i < $y; $i++) {
@@ -123,9 +126,6 @@ function primitive2nunity($n, $mod) {
 	return -1;
 }
 
-function ntt() {
-}
-
 function polyRand($n, $max) {
 	$out = [];
 
@@ -155,8 +155,24 @@ $modulusRLWE = 7681;
 $keysizeRLWE = 4;
 $sampleBoundRLWE = 5;
 $ringRLWE = polyAdd(polyPower([1], $keysizeRLWE), [1]);
-$ringNunity = primitivenunity($keysizeRLWE, $modulusRLWE);
-$ring2Nunity = primitive2nunity($keysizeRLWE, $modulusRLWE);
+$ring2NunityRLWE = primitive2nunity($keysizeRLWE, $modulusRLWE);
+
+?>
+
+<?php
+
+function ntt($in) {
+	$out = [];
+
+	for ($j = 0; $j < count($in); $j++) {
+		for ($i = 0; $i < $GLOBALS["keysizeRLWE"]; $i++) {
+			$out[$j] += modPow($GLOBALS["ring2NunityRLWE"], 2 * $i * $j + $i, $GLOBALS["modulusRLWE"]) * $in[$i];
+			$out[$j] %= $GLOBALS["modulusRLWE"];
+		}
+	}
+
+	return $out;
+}
 
 ?>
 
@@ -187,8 +203,7 @@ function initRLWE() { // returns in the form [a, p, s, e]
 
 <?php
 
-echo $GLOBALS["ringNunity"] . "<br>";
-echo $GLOBALS["ring2Nunity"] . "<br>";
+polyDisplay(ntt([1, 2, 3, 4]));
 
 /*
 $init = initRLWE();
