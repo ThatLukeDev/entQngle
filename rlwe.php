@@ -209,6 +209,18 @@ function polyMulRLWE($a, $b) {
 	return inttRLWE($outntt);
 }
 
+function polyAddRLWE($a, $b) {
+	$antt = nttRLWE($a);
+	$bntt = nttRLWE($b);
+
+	$outntt = [];
+	for ($i = 0; $i < count($a); $i++) {
+		$outntt[$i] = $antt[$i] + $bntt[$i];
+	}
+
+	return inttRLWE($outntt);
+}
+
 ?>
 
 <?php
@@ -238,7 +250,7 @@ function initRLWE() { // returns in the form [a, p, s, e]
 
 <?php
 
-polyDisplay(polyMulRLWE([1, 2, 3, 4], [5, 6, 7, 8]));
+polyDisplay(polyAddRLWE([1, 2, 3, 4], [5, 6, 7, 8]));
 
 /*
 $init = initRLWE();
