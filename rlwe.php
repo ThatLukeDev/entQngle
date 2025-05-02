@@ -98,32 +98,16 @@ function modPow($x, $y, $mod) {
 	if ($y == 0) {
 		return 1;
 	}
-	$working = $x;
-
-	for ($i = 1; $i < $y; $i++) {
-		$working *= $x;
-		$working %= $mod;
-	}
-
-	return $working;
-}
-
-function modPowScale($x, $y, $mod) {
-	if ($y == 0) {
-		return 1;
-	}
 	$working = 1;
 
 	$base = $x % $mod;
 	$exp = $y;
 	while ($exp > 0) {
-		if ($i & 1 == 1) {
-			$working *= $base;
-			$working %= $mod;
+		if ($exp % 2 == 1) {
+			$working = ($working * $base) % $mod;
 		}
 		$exp >>= 1;
-		$base *= $base;
-		$base %= $mod;
+		$base = ($base ** 2) % $mod;
 	}
 
 	return $working;
@@ -181,8 +165,8 @@ function polyDisplay($a) {
 
 <?php
 
-$modulusRLWE = 7681;//25601;
-$keysizeRLWE = 4;//512;
+$modulusRLWE = 25601;
+$keysizeRLWE = 512;
 $sampleBoundRLWE = 5;
 $ringRLWE = polyAdd(polyPower([1], $keysizeRLWE), [1]);
 $ring2NunityRLWE = primitive2nunity($keysizeRLWE, $modulusRLWE);
@@ -196,7 +180,7 @@ function basentt($in, $n2unity, $mod, $rebase) {
 
 	for ($j = 0; $j < count($in); $j++) {
 		for ($i = 0; $i < count($in); $i++) {
-			$out[$j] += modPowScale($n2unity, (2 * $i * $j + $i * (1 - $rebase) + $j * $rebase) % $GLOBALS["keysizeRLWE"], $mod) * $in[$i];
+			$out[$j] += modPow($n2unity, (2 * $i * $j + $i * (1 - $rebase) + $j * $rebase) % $GLOBALS["keysizeRLWE"], $mod) * $in[$i];
 			$out[$j] %= $mod;
 		}
 	}
