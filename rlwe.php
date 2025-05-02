@@ -113,6 +113,19 @@ function modPow($x, $y, $mod) {
 	return $working;
 }
 
+$modPowLookup = [];
+
+function modPowCached($x, $y, $mod) { // these vals can physically be added later for speed
+	if (!empty($GLOBALS["modPowLookup"][$mod." ".$x." ".$y])) {
+		return $GLOBALS["modPowLookup"][$mod." ".$x." ".$y];
+	}
+
+	$out = modPow($x, $y, $mod);
+	$GLOBALS["modPowLookup"][$mod." ".$x." ".$y] = $out;
+
+	return $out;
+}
+
 function primitivenunity($n, $mod) {
 	for ($root = 0; $root < $mod; $root++) {
 		if (modPow($root, $n, $mod) == 1) {
@@ -180,7 +193,7 @@ function basentt($in, $n2unity, $mod, $rebase) {
 
 	for ($j = 0; $j < count($in); $j++) {
 		for ($i = 0; $i < count($in); $i++) {
-			$out[$j] += modPow($n2unity, (2 * $i * $j + $i * (1 - $rebase) + $j * $rebase) % $GLOBALS["keysizeRLWE"], $mod) * $in[$i];
+			$out[$j] += modPowCached($n2unity, (2 * $i * $j + $i * (1 - $rebase) + $j * $rebase) % $GLOBALS["keysizeRLWE"], $mod) * $in[$i];
 			$out[$j] %= $mod;
 		}
 	}
