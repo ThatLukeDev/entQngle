@@ -168,8 +168,17 @@ function polyRand($n, $max) {
 <?php
 
 function polyDisplay($a) {
+	$skip = false;
 	for ($i = 0; $i < count($a); $i++) {
-		echo "{$a[$i]} x^{$i}&nbsp; &nbsp; ";
+		if ($i > 4 && $i < count($a) - 4) {
+			if (!$skip) {
+				echo "...&nbsp; &nbsp; ";
+			}
+			$skip = true;
+		}
+		else {
+			echo "{$a[$i]} x^{$i}&nbsp; &nbsp; ";
+		}
 	}
 	echo "<br>";
 }
