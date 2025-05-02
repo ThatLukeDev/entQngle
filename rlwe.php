@@ -85,6 +85,15 @@ function polyMod($eqn, $div) {
 	return polyTrim($modulus);
 }
 
+function polyRing($eqn, $div, $mod) {
+	$out = $eqn;
+	for ($i = 0; $i < count($out); $i++) {
+		$out[$i] += $mod;
+		$out[$i] %= $mod;
+	}
+	return polyMod($out, $div);
+}
+
 function modPow($x, $y, $mod) {
 	if ($y == 0) {
 		return 1;
@@ -94,6 +103,27 @@ function modPow($x, $y, $mod) {
 	for ($i = 1; $i < $y; $i++) {
 		$working *= $x;
 		$working %= $mod;
+	}
+
+	return $working;
+}
+
+function modPowScale($x, $y, $mod) {
+	if ($y == 0) {
+		return 1;
+	}
+	$working = 1;
+
+	$base = $x % $mod;
+	$exp = $y;
+	while ($exp > 0) {
+		if ($i & 1 == 1) {
+			$working *= $base;
+			$working %= $mod;
+		}
+		$exp >>= 1;
+		$base *= $base;
+		$base %= $mod;
 	}
 
 	return $working;
@@ -151,8 +181,8 @@ function polyDisplay($a) {
 
 <?php
 
-$modulusRLWE = 7681;
-$keysizeRLWE = 4;
+$modulusRLWE = 7681;//25601;
+$keysizeRLWE = 4;//512;
 $sampleBoundRLWE = 5;
 $ringRLWE = polyAdd(polyPower([1], $keysizeRLWE), [1]);
 $ring2NunityRLWE = primitive2nunity($keysizeRLWE, $modulusRLWE);
@@ -166,7 +196,7 @@ function basentt($in, $n2unity, $mod, $rebase) {
 
 	for ($j = 0; $j < count($in); $j++) {
 		for ($i = 0; $i < count($in); $i++) {
-			$out[$j] += modPow($n2unity, 2 * $i * $j + $i * (1 - $rebase) + $j * $rebase, $mod) * $in[$i];
+			$out[$j] += modPowScale($n2unity, (2 * $i * $j + $i * (1 - $rebase) + $j * $rebase) % $GLOBALS["keysizeRLWE"], $mod) * $in[$i];
 			$out[$j] %= $mod;
 		}
 	}
@@ -198,6 +228,12 @@ function inttRLWE($in) {
 }
 
 function polyMulRLWE($a, $b) {
+	for ($i = count($a); $i < $GLOBALS["keysizeRLWE"]; $i++) {
+		$a[$i] = 0;
+	}
+	for ($i = count($b); $i < $GLOBALS["keysizeRLWE"]; $i++) {
+		$b[$i] = 0;
+	}
 	$antt = nttRLWE($a);
 	$bntt = nttRLWE($b);
 
@@ -210,6 +246,12 @@ function polyMulRLWE($a, $b) {
 }
 
 function polyAddRLWE($a, $b) {
+	for ($i = count($a); $i < $GLOBALS["keysizeRLWE"]; $i++) {
+		$a[$i] = 0;
+	}
+	for ($i = count($b); $i < $GLOBALS["keysizeRLWE"]; $i++) {
+		$b[$i] = 0;
+	}
 	$antt = nttRLWE($a);
 	$bntt = nttRLWE($b);
 
@@ -236,12 +278,12 @@ function samplePolyRLWE() {
 }
 
 function initRLWE() { // returns in the form [a, p, s, e]
-	$a = polyMod(polyRand($GLOBALS["keysizeRLWE"], $GLOBALS["modulusRLWE"]), $GLOBALS["ringRLWE"]);
+	$a = polyRing(polyRand($GLOBALS["keysizeRLWE"], $GLOBALS["modulusRLWE"]), $GLOBALS["ringRLWE"], $GLOBALS["modulusRLWE"]);
 
 	$s = samplePolyRLWE();
 	$e = samplePolyRLWE();
 
-	$p = polyMod(polyAdd(polyMul($a, $s), polyMul($e, [2])), $GLOBALS["ringRLWE"]);
+	$p = polyAddRLWE(polyMulRLWE($a, $s), polyMulRLWE($e, [2]));
 
 	return [$a, $p, $s, $e];
 }
@@ -250,9 +292,6 @@ function initRLWE() { // returns in the form [a, p, s, e]
 
 <?php
 
-polyDisplay(polyAddRLWE([1, 2, 3, 4], [5, 6, 7, 8]));
-
-/*
 $init = initRLWE();
 
 polyDisplay($init[0]);
@@ -263,6 +302,5 @@ polyDisplay($init[2]);
 echo "<br><br>";
 polyDisplay($init[3]);
 echo "<br><br>";
- */
 
 ?>
