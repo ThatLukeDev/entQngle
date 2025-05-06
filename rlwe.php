@@ -283,6 +283,32 @@ function samplePolyRLWE() {
 	return $out;
 }
 
+function SigRLWE($in) {
+	$out = [];
+
+	for ($i = 0; $i < count($in); $i++) {
+		$test = $in[$i] - intdiv($GLOBALS["modulusRLWE"], 4);
+		$test += $GLOBALS["modulusRLWE"];
+		$test %= $GLOBALS["modulusRLWE"];
+		if ($test > intdiv($GLOBALS["modulusRLWE"], 4)) {
+			$out[$i] = 1;
+		}
+		else {
+			$out[$i] = 0;
+		}
+	}
+
+	return $out;
+}
+
+function Mod2skRLWE($v, $w) {
+	$out = polyMulRLWE(polyAddRLWE($v, $w), intdiv($GLOBALS["modulusRLWE"]));
+	for ($i = 0; $i < count($out); $i++) {
+		$out[$i] %= 2;
+	}
+	return $out;
+}
+
 function initRLWE() { // returns in the form [a, p, s, e]
 	$a = polyRing(polyRand($GLOBALS["keysizeRLWE"], $GLOBALS["modulusRLWE"]), $GLOBALS["ringRLWE"], $GLOBALS["modulusRLWE"]);
 
@@ -294,7 +320,7 @@ function initRLWE() { // returns in the form [a, p, s, e]
 	return [$a, $p, $s, $e];
 }
 
-function respondRLWE($a, $p_I) { // returns in the form [p_R, w]
+function respondRLWE($a, $p_I) { // returns in the form [p_R, w, $key]
 	$s_R = samplePolyRLWE();
 	$e_R = samplePolyRLWE();
 
@@ -306,7 +332,7 @@ function respondRLWE($a, $p_I) { // returns in the form [p_R, w]
 	$w = SigRLWE($k_R);
 	$sk_R = Mod2skRLWE($k_R, $w);
 
-	return [$p_R, $w];
+	return [$p_R, $w, $sk_R];
 }
 
 ?>
