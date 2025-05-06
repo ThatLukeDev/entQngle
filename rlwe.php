@@ -294,6 +294,21 @@ function initRLWE() { // returns in the form [a, p, s, e]
 	return [$a, $p, $s, $e];
 }
 
+function respondRLWE($a, $p_I) { // returns in the form [p_R, w]
+	$s_R = samplePolyRLWE();
+	$e_R = samplePolyRLWE();
+
+	$p_R = polyAddRLWE(polyMulRLWE($a, $s), polyMulRLWE($e_R, [2]));
+
+	$e2_R = samplePolyRLWE();
+	$k_R = polyAddRLWE(polyMulRLWE($p_I, $s_R), polyMulRLWE($e2_R, [2]));
+
+	$w = SigRLWE($k_R);
+	$sk_R = Mod2skRLWE($k_R, $w);
+
+	return [$p_R, $w];
+}
+
 ?>
 
 <?php
