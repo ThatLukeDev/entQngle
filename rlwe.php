@@ -287,10 +287,7 @@ function SigRLWE($in) {
 	$out = [];
 
 	for ($i = 0; $i < count($in); $i++) {
-		$test = $in[$i] - intdiv($GLOBALS["modulusRLWE"], 4);
-		$test += $GLOBALS["modulusRLWE"];
-		$test %= $GLOBALS["modulusRLWE"];
-		if ($test > intdiv($GLOBALS["modulusRLWE"], 4)) {
+		if ($out[$i] < intdiv($GLOBALS["modulusRLWE"], 4) || $out[$i] > 3 * intdiv($GLOBALS["modulusRLWE"], 4)) {
 			$out[$i] = 1;
 		}
 		else {
@@ -302,7 +299,7 @@ function SigRLWE($in) {
 }
 
 function Mod2skRLWE($v, $w) {
-	$out = polyMulRLWE(polyAddRLWE($v, $w), [intdiv($GLOBALS["modulusRLWE"] - 1, 2)]);
+	$out = polyAddRLWE($v, polyMulRLWE($w, [intdiv($GLOBALS["modulusRLWE"] - 1, 2)]));
 	for ($i = 0; $i < count($out); $i++) {
 		$out[$i] %= 2;
 	}
