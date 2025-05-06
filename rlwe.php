@@ -302,7 +302,7 @@ function SigRLWE($in) {
 }
 
 function Mod2skRLWE($v, $w) {
-	$out = polyMulRLWE(polyAddRLWE($v, $w), intdiv($GLOBALS["modulusRLWE"]));
+	$out = polyMulRLWE(polyAddRLWE($v, $w), [intdiv($GLOBALS["modulusRLWE"] - 1, 2)]);
 	for ($i = 0; $i < count($out); $i++) {
 		$out[$i] %= 2;
 	}
@@ -320,7 +320,7 @@ function initRLWE() { // returns in the form [a, p, s]
 	return [$a, $p, $s];
 }
 
-function respondRLWE($a, $p_I) { // returns in the form [p_R, w, $key]
+function respondRLWE($a, $p_I, $s) { // returns in the form [p_R, w, $key]
 	$s_R = samplePolyRLWE();
 	$e_R = samplePolyRLWE();
 
@@ -340,7 +340,7 @@ function finalRLWE($a, $s_I, $p_R, $w) {
 
 	$k_I = polyAddRLWE(polyMulRLWE($p_R, $s_I), polyMulRLWE($e2_I, [2]));
 
-	$sk_R = Mod2skRLWE($k_R, $w);
+	$sk_R = Mod2skRLWE($k_I, $w);
 
 	return $sk_R;
 }
@@ -350,14 +350,10 @@ function finalRLWE($a, $s_I, $p_R, $w) {
 <?php
 
 $init = initRLWE();
+$response = respondRLWE($init[0], $init[1], $init[2]);
+$final = finalRLWE($init[0], $init[2], $response[0], $response[1]);
 
-polyDisplay($init[0]);
-echo "<br><br>";
-polyDisplay($init[1]);
-echo "<br><br>";
-polyDisplay($init[2]);
-echo "<br><br>";
-polyDisplay($init[3]);
-echo "<br><br>";
+polyDisplay($response[2]);
+polyDisplay($final);
 
 ?>
