@@ -188,7 +188,7 @@ function polyDisplay($a) {
 <?php
 
 $modulusRLWE = 25601;
-$keysizeRLWE = 256;
+$keysizeRLWE = 32;
 $sampleBoundRLWE = 5;
 $ringRLWE = polyAdd(polyPower([1], $keysizeRLWE), [1]);
 $ring2NunityRLWE = primitive2nunity($keysizeRLWE, $modulusRLWE);
@@ -320,11 +320,11 @@ function initRLWE() { // returns in the form [a, p, s]
 	return [$a, $p, $s];
 }
 
-function respondRLWE($a, $p_I, $s) { // returns in the form [p_R, w, $key]
+function respondRLWE($a, $p_I) { // returns in the form [p_R, w, $key]
 	$s_R = samplePolyRLWE();
 	$e_R = samplePolyRLWE();
 
-	$p_R = polyAddRLWE(polyMulRLWE($a, $s), polyMulRLWE($e_R, [2]));
+	$p_R = polyAddRLWE(polyMulRLWE($a, $s_R), polyMulRLWE($e_R, [2]));
 
 	$e2_R = samplePolyRLWE();
 	$k_R = polyAddRLWE(polyMulRLWE($p_I, $s_R), polyMulRLWE($e2_R, [2]));
@@ -350,7 +350,7 @@ function finalRLWE($a, $s_I, $p_R, $w) {
 <?php
 
 $init = initRLWE();
-$response = respondRLWE($init[0], $init[1], $init[2]);
+$response = respondRLWE($init[0], $init[1]);
 $final = finalRLWE($init[0], $init[2], $response[0], $response[1]);
 
 polyDisplay($response[2]);
