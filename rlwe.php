@@ -188,7 +188,7 @@ function polyDisplay($a) {
 <?php
 
 $modulusRLWE = 25601;
-$keysizeRLWE = 512;
+$keysizeRLWE = 256;
 $sampleBoundRLWE = 5;
 $ringRLWE = polyAdd(polyPower([1], $keysizeRLWE), [1]);
 $ring2NunityRLWE = primitive2nunity($keysizeRLWE, $modulusRLWE);
@@ -309,7 +309,7 @@ function Mod2skRLWE($v, $w) {
 	return $out;
 }
 
-function initRLWE() { // returns in the form [a, p, s, e]
+function initRLWE() { // returns in the form [a, p, s]
 	$a = polyRing(polyRand($GLOBALS["keysizeRLWE"], $GLOBALS["modulusRLWE"]), $GLOBALS["ringRLWE"], $GLOBALS["modulusRLWE"]);
 
 	$s = samplePolyRLWE();
@@ -317,7 +317,7 @@ function initRLWE() { // returns in the form [a, p, s, e]
 
 	$p = polyAddRLWE(polyMulRLWE($a, $s), polyMulRLWE($e, [2]));
 
-	return [$a, $p, $s, $e];
+	return [$a, $p, $s];
 }
 
 function respondRLWE($a, $p_I) { // returns in the form [p_R, w, $key]
@@ -333,6 +333,16 @@ function respondRLWE($a, $p_I) { // returns in the form [p_R, w, $key]
 	$sk_R = Mod2skRLWE($k_R, $w);
 
 	return [$p_R, $w, $sk_R];
+}
+
+function finalRLWE($a, $s_I, $p_R, $w) {
+	$e2_I = samplePolyRLWE();
+
+	$k_I = polyAddRLWE(polyMulRLWE($p_R, $s_I), polyMulRLWE($e2_I, [2]));
+
+	$sk_R = Mod2skRLWE($k_R, $w);
+
+	return $sk_R;
 }
 
 ?>
