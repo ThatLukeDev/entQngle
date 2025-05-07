@@ -353,4 +353,13 @@ $final = finalRLWE($init[0], $init[2], $response[0], $response[1]);
 polyDisplay($response[2]);
 polyDisplay($final);
 
+$v = 0;
+for ($i = 0; $i < 32; $i++) {
+	if ($final[$i] == $response[2][$i]) {
+		$v++;
+	}
+}
+echo "<br><br>";
+echo "Cooberation: " . ($v / 32);
+
 ?>
