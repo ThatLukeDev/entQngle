@@ -287,7 +287,7 @@ function SigRLWE($in) {
 	$out = [];
 
 	for ($i = 0; $i < count($in); $i++) {
-		if ($out[$i] < intdiv($GLOBALS["modulusRLWE"], 4) || $out[$i] > 3 * intdiv($GLOBALS["modulusRLWE"], 4)) {
+		if ($in[$i] < intdiv($GLOBALS["modulusRLWE"], 4) || $in[$i] > 3 * intdiv($GLOBALS["modulusRLWE"], 4)) {
 			$out[$i] = 1;
 		}
 		else {
