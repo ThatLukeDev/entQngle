@@ -202,7 +202,7 @@ function basentt($in, $n2unity, $mod, $rebase) {
 
 	for ($j = 0; $j < count($in); $j++) {
 		for ($i = 0; $i < count($in); $i++) {
-			$out[$j] += modPowCached($n2unity, (2 * $i * $j + $i * (1 - $rebase) + $j * $rebase) % $GLOBALS["keysizeRLWE"], $mod) * $in[$i];
+			$out[$j] += modPowCached($n2unity, (2 * $i * $j + $i * (1 - $rebase) + $j * $rebase) % ($GLOBALS["keysizeRLWE"] * 2), $mod) * $in[$i];
 			$out[$j] %= $mod;
 		}
 	}
