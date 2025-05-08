@@ -1,3 +1,5 @@
+<?php $GLOBALS["start"] = microtime(true); // TEMPORARY ?>
+
 <?php
 
 function polyAdd($a, $b) {
@@ -188,7 +190,7 @@ function polyDisplay($a) {
 <?php
 
 $modulusRLWE = 25601;
-$keysizeRLWE = 32;
+$keysizeRLWE = 512;
 $sampleBoundRLWE = 5;
 $ringRLWE = polyAdd(polyPower([1], $keysizeRLWE), [1]);
 $ring2NunityRLWE = primitive2nunity($keysizeRLWE, $modulusRLWE);
@@ -361,5 +363,8 @@ for ($i = 0; $i < 32; $i++) {
 }
 echo "<br><br>";
 echo "Cooberation: " . ($v / 32);
+echo "<br><br>";
 
 ?>
+
+<?php echo "Took " . round(microtime(true) - $GLOBALS["start"], 1) . "s"; // TEMPORARY ?>
