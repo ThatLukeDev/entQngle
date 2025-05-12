@@ -362,7 +362,21 @@ function finalRLWE($a, $s_I, $p_R, $w) {
 
 <?php
 
-echo bitReverse(5, 8);
+$eqn1 = [2768, 4286, 3313];
+$eqn2 = [1234, 9023, 7362];
+
+echo "Equation 1:<br>";
+polyDisplay($eqn1);
+echo "<br>";
+
+echo "Equation 2:<br>";
+polyDisplay($eqn2);
+echo "<br>";
+
+echo "Multiplied:<br>";
+polyDisplay(polyMulRLWE($eqn1, $eqn2));
+polyDisplay([10779, 4206, 6770, 4331, 18154]);
+echo "(desired first terms)<br><br>";
 
 /*
 $init = initRLWE();
