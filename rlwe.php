@@ -199,6 +199,20 @@ $ring2NunityRLWE = primitive2nunity($keysizeRLWE, $modulusRLWE);
 
 <?php
 
+function bitReverse($x, $k) {
+	$mask = (1 << $k) - 1;
+
+	$v = $x & $mask;
+	$out = 0;
+	for ($i = 0; $i < $k; $i++) {
+		$out <<= 1;
+		$out |= $v & 1;
+		$v >>= 1;
+	}
+
+	return $out;
+}
+
 function basentt($in, $n2unity, $mod, $rebase) {
 	$out = [];
 
@@ -348,6 +362,9 @@ function finalRLWE($a, $s_I, $p_R, $w) {
 
 <?php
 
+echo bitReverse(5, 8);
+
+/*
 $init = initRLWE();
 $response = respondRLWE($init[0], $init[1]);
 $final = finalRLWE($init[0], $init[2], $response[0], $response[1]);
@@ -364,6 +381,7 @@ for ($i = 0; $i < 32; $i++) {
 echo "<br><br>";
 echo "Cooberation: " . ($v / 32);
 echo "<br><br>";
+ */
 
 ?>
 
