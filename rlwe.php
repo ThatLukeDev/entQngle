@@ -190,8 +190,10 @@ function polyDisplay($a) {
 <?php
 
 $modulusRLWE = 25601;
-$keysizeRLWE = 512;
 $sampleBoundRLWE = 5;
+$keypowRLWE = 9;
+
+$keysizeRLWE = 2 ** $keypowRLWE;
 $ringRLWE = polyAdd(polyPower([1], $keysizeRLWE), [1]);
 $ring2NunityRLWE = primitive2nunity($keysizeRLWE, $modulusRLWE);
 
