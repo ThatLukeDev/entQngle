@@ -190,8 +190,8 @@ function polyDisplay($a) {
 <?php
 
 $modulusRLWE = 25601;
-$sampleBoundRLWE = 5;
 $keypowRLWE = 9;
+$sampleBoundRLWE = 5;
 
 $keysizeRLWE = 2 ** $keypowRLWE;
 $ringRLWE = polyAdd(polyPower([1], $keysizeRLWE), [1]);
@@ -238,7 +238,35 @@ function inverseModulus($val, $mod) {
 }
 
 function nttRLWE($in) {
-	return basentt($in, $GLOBALS["ring2NunityRLWE"], $GLOBALS["modulusRLWE"], 0);
+	$out = $in;
+
+	$rootunity = $GLOBALS["ring2NunityRLWE"];
+	$k = $GLOBALS["keypowRLWE"];
+	$mod = $GLOBALS["modulusRLWE"];
+
+	$t = $GLOBALS["keysizeRLWE"];
+	for ($m = 1; $m < $GLOBALS["keysizeRLWE"]; $m *= 2) {
+		$t = intdiv($t, 2);
+		for ($i = 0; $i < $m; $i++) {
+			$j_1 = 2 * $i * $t;
+			$j_2 = $j_1 + $t;
+			$s = modPowCached($rootunity, bitReverse($m + $i, $k), $mod);
+
+			for ($j = $j_1; $j < $j_2; $j++) {
+				$u = $out[$j];
+				$v = $out[$j + $t] * $s;
+				$out[$j] = ($u + $v) % $mod;
+				$out[$j + $t] = ($u - $v) % $mod;
+			}
+		}
+	}
+
+	$orderedOut = [];
+	for ($i = 0; $i < count($out); $i++) {
+		$orderedOut[bitReverse($i, $k)] = $out[$i];
+	}
+
+	return $orderedOut;
 }
 
 function inttRLWE($in) {
