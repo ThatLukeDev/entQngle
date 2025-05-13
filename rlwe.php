@@ -256,7 +256,7 @@ function nttRLWE($in) {
 				$u = $out[$j];
 				$v = $out[$j + $t] * $s;
 				$out[$j] = ($u + $v) % $mod;
-				$out[$j + $t] = ($u - $v) % $mod;
+				$out[$j + $t] = ($u - $v + $mod) % $mod;
 			}
 		}
 	}
@@ -269,14 +269,42 @@ function nttRLWE($in) {
 	return $orderedOut;
 }
 
-function inttRLWE($in) {
-	$out = basentt($in, inverseModulus($GLOBALS["ring2NunityRLWE"], $GLOBALS["modulusRLWE"]), $GLOBALS["modulusRLWE"], 1);
-	$inverse = inverseModulus($GLOBALS["keysizeRLWE"], $GLOBALS["modulusRLWE"]);
-	for ($i = 0; $i < count($out); $i++) {
-		$out[$i] *= $inverse;
-		$out[$i] %= $GLOBALS["modulusRLWE"];
+function inttRLWE($reverseIn) {
+	$k = $GLOBALS["keypowRLWE"];
+	$mod = $GLOBALS["modulusRLWE"];
+	$rootunity = inverseModulus($GLOBALS["ring2NunityRLWE"], $mod);
+	$inverse = inverseModulus($GLOBALS["keysizeRLWE"], $mod);
+
+	$in = [];
+	for ($i = 0; $i < count($reverseIn); $i++) {
+		$in[bitReverse($i, $k)] = $reverseIn[$i];
 	}
-	return $out;
+
+	$t = 1;
+	for ($m = $GLOBALS["keysizeRLWE"]; $m > 1; $m = intdiv($m, 2)) {
+		$j_1 = 0;
+		$h = intdiv($m, 2);
+		for ($i = 0; $i < $h; $i++) {
+			$j_2 = $j_1 + $t;
+			$s = modPowCached($rootunity, bitReverse($h + $i, $k), $mod);
+			for ($j = $j_1; $j < $j_2; $j++) {
+				$u = $in[$j];
+				$v = $in[$j + $t];
+				$in[$j] = ($u + $v) % $mod;
+				$in[$j + $t] = (($u - $v + $mod) * $s) % $mod;
+			}
+			$j_1 += $t * 2;
+		}
+		$t *= 2;
+	}
+	for ($i = 0; $i < count($in); $i++) {
+		$in[$i] *= $inverse;
+		$in[$i] %= $mod;
+		$in[$i] += $mod;
+		$in[$i] %= $mod;
+	}
+
+	return $in;
 }
 
 function polyMulRLWE($a, $b) {
