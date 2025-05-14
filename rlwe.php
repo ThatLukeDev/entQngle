@@ -422,19 +422,21 @@ function finalRLWE($a, $s_I, $p_R, $w) {
 
 ?>
 
+<br>ACC:<br><br>
+
 <?php
 
 /*
  * START OF TESTS
  */
 
-polyDisplay($GLOBALS["ringRLWE"]);
+polyDisplay([$GLOBALS["ring2NunityRLWE"]]);
 
 ?>
 
-<br>
+<br>JS:<br><br>
 
 <script src="rlwe.js"></script>
 <script>
-polyDisplay(ringRLWE);
+polyDisplay([ring2NunityRLWE]);
 </script>
