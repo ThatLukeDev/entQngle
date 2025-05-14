@@ -1,5 +1,3 @@
-<?php $GLOBALS["start"] = microtime(true); // TEMPORARY ?>
-
 <?php
 
 function polyAdd($a, $b) {
@@ -424,25 +422,4 @@ function finalRLWE($a, $s_I, $p_R, $w) {
 
 ?>
 
-<?php
-
-$init = initRLWE();
-$response = respondRLWE($init[0], $init[1]);
-$final = finalRLWE($init[0], $init[2], $response[0], $response[1]);
-
-polyDisplay($response[2]);
-polyDisplay($final);
-
-$v = 0;
-for ($i = 0; $i < 32; $i++) {
-	if ($final[$i] == $response[2][$i]) {
-		$v++;
-	}
-}
-echo "<br><br>";
-echo "Cooberation: " . ($v / 32);
-echo "<br><br>";
-
-?>
-
-<?php echo "Took " . round(microtime(true) - $GLOBALS["start"], 1) . "s"; // TEMPORARY ?>
+<script src="rlwe.js"></script>
