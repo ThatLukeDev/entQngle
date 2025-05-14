@@ -422,4 +422,19 @@ function finalRLWE($a, $s_I, $p_R, $w) {
 
 ?>
 
+<?php
+
+/*
+ * START OF TESTS
+ */
+
+polyDisplay($GLOBALS["ringRLWE"]);
+
+?>
+
+<br>
+
 <script src="rlwe.js"></script>
+<script>
+polyDisplay(ringRLWE);
+</script>
