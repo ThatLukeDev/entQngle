@@ -191,7 +191,7 @@ function polyDisplay($a) {
 
 $modulusRLWE = 25601;
 $keypowRLWE = 9;
-$sampleBoundRLWE = 5;
+$sampleBoundRLWE = 8 / sqrt(2 * pi());
 
 $keysizeRLWE = 2 ** $keypowRLWE;
 $ringRLWE = polyAdd(polyPower([1], $keysizeRLWE), [1]);
@@ -347,11 +347,17 @@ function polyAddRLWE($a, $b) {
 
 <?php
 
-function samplePolyRLWE() {
-	$out =  polyRand($GLOBALS["keysizeRLWE"], $GLOBALS["sampleBoundRLWE"]);
+function randomDecimal() {
+	return random_int(1, 1000000000) / 1000000000;
+}
 
-	for ($i = 0; $i < count($out); $i++) {
-		$out[$i] = ($out[$i] + $GLOBALS["modulusRLWE"]) % $GLOBALS["modulusRLWE"];
+function samplePolyRLWE() {
+	$out = [];
+
+	for ($i = 0; $i < $GLOBALS["keysizeRLWE"]; $i++) {
+		$out[$i] = round(sqrt(-2 * log(randomDecimal())) * cos(2*pi() * randomDecimal()) * $GLOBALS["sampleBoundRLWE"]);
+		$out[$i] += $GLOBALS["modulusRLWE"];
+		$out[$i] %= $GLOBALS["modulusRLWE"];
 	}
 
 	return $out;
