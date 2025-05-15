@@ -430,7 +430,7 @@ function finalRLWE($a, $s_I, $p_R, $w) {
  * START OF TESTS
  */
 
-polyDisplay(polyRand(10, 20));
+polyDisplay(nttRLWE([1, 2, 3, 4]));
 
 ?>
 
@@ -438,5 +438,5 @@ polyDisplay(polyRand(10, 20));
 
 <script src="rlwe.js"></script>
 <script>
-polyDisplay(polyRand(10, 20));
+polyDisplay(nttRLWE([1, 2, 3, 4]));
 </script>

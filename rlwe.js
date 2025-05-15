@@ -121,6 +121,8 @@ var bitReverse = (x, k) => {
 		out |= v & 1;
 		v >>= 1;
 	}
+
+	return out;
 };
 
 var inverseModulus = (val, mod) => {
@@ -130,4 +132,48 @@ var inverseModulus = (val, mod) => {
 		}
 	}
 	return null;
+};
+
+var padRLWE = (val) => {
+	let out = val;
+
+	for (let i = 0; i < keysizeRLWE; i++) {
+		if (out[i] == undefined) {
+			out[i] = 0;
+		}
+	}
+
+	return out;
+}
+
+var nttRLWE = (val) => {
+	let out = padRLWE(val);
+
+	let rootunity = ring2NunityRLWE;
+	let k = keypowRLWE;
+	let mod = modulusRLWE;
+
+	let t = keysizeRLWE;
+	for (let m = 1; m < keysizeRLWE; m *= 2) {
+		t /= 2;
+		for (let i = 0; i < m; i++) {
+			let j1 = 2 * i * t;
+			let j2 = j1 + t;
+			let s = modPowCached(rootunity, bitReverse(m + i, k), mod);
+
+			for (let j = j1; j < j2; j++) {
+				let u = out[j];
+				let v = out[j + t] * s;
+				out[j] = (u + v) % mod;
+				out[j + t] = (u - v + mod) % mod;
+			}
+		}
+	}
+
+	let orderedOut = [];
+	for (let i = 0; i < keysizeRLWE; i++) {
+		orderedOut[bitReverse(i, k)] = out[i];
+	}
+
+	return orderedOut;
 };
