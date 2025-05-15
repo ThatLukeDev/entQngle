@@ -110,3 +110,24 @@ var sampleBoundRLWE = 8 / Math.sqrt(2 * Math.pi);
 var keysizeRLWE = 2 ** keypowRLWE;
 var ringRLWE = polyAdd(polyPower([1], keysizeRLWE), [1]);
 var ring2NunityRLWE = primitive2nunity(keysizeRLWE, modulusRLWE);
+
+var bitReverse = (x, k) => {
+	let mask = (1 << k) - 1;
+
+	let v = x & mask;
+	let out = 0;
+	for (let i = 0; i < k; i++) {
+		out <<= 1;
+		out |= v & 1;
+		v >>= 1;
+	}
+};
+
+var inverseModulus = (val, mod) => {
+	for (let i = 1; i < mod; i++) {
+		if ((i * val) % mod == 1) {
+			return i;
+		}
+	}
+	return null;
+};
