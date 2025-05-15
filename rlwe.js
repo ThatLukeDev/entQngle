@@ -74,6 +74,19 @@ var primitive2nunity = (n, mod) => {
 	}
 };
 
+var polyRand = (n, max) => {
+	let out = [];
+
+	let vals = new Int32Array(n);
+	self.crypto.getRandomValues(vals);
+
+	for (let i = 0; i < n; i++) {
+		out[i] = vals[i] % (max + 1);
+	}
+
+	return out;
+};
+
 var polyDisplay = (poly) => {
 	let skip = false;
 	for (let i = 0; i < poly.length; i++) {

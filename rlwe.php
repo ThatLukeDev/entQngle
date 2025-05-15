@@ -430,7 +430,7 @@ function finalRLWE($a, $s_I, $p_R, $w) {
  * START OF TESTS
  */
 
-polyDisplay([$GLOBALS["ring2NunityRLWE"]]);
+polyDisplay(polyRand(10, 20));
 
 ?>
 
@@ -438,5 +438,5 @@ polyDisplay([$GLOBALS["ring2NunityRLWE"]]);
 
 <script src="rlwe.js"></script>
 <script>
-polyDisplay([ring2NunityRLWE]);
+polyDisplay(polyRand(10, 20));
 </script>
