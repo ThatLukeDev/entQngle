@@ -101,11 +101,12 @@ var polyDisplay = (poly) => {
 			document.body.innerHTML += `${poly[i]} x^${i} &nbsp; &nbsp; `;
 		}
 	}
+	document.body.innerHTML += "<br>";
 };
 
 var modulusRLWE = 25601;
 var keypowRLWE = 9;
-var sampleBoundRLWE = 8 / Math.sqrt(2 * Math.pi);
+var sampleBoundRLWE = 8 / Math.sqrt(2 * Math.PI);
 
 var keysizeRLWE = 2 ** keypowRLWE;
 var ringRLWE = polyAdd(polyPower([1], keysizeRLWE), [1]);
@@ -214,4 +215,57 @@ var inttRLWE = (inverseVal) => {
 	}
 
 	return val;
+}
+
+var polyMulRLWE = (a, b) => {
+	for (let i = 0; i < keysizeRLWE; i++) {
+		if (a[i] == undefined) {
+			a[i] = 0;
+		}
+		if (b[i] == undefined) {
+			b[i] = 0;
+		}
+	}
+	let antt = nttRLWE(a);
+	let bntt = nttRLWE(b);
+	let outntt = [];
+	for (let i = 0; i < keysizeRLWE; i++) {
+		outntt[i] = antt[i] * bntt[i];
+	}
+	return inttRLWE(outntt);
+};
+
+var polyAddRLWE = (a, b) => {
+	for (let i = 0; i < keysizeRLWE; i++) {
+		if (a[i] == undefined) {
+			a[i] = 0;
+		}
+		if (b[i] == undefined) {
+			b[i] = 0;
+		}
+	}
+	let antt = nttRLWE(a);
+	let bntt = nttRLWE(b);
+	let outntt = [];
+	for (let i = 0; i < keysizeRLWE; i++) {
+		outntt[i] = antt[i] + bntt[i];
+	}
+	return inttRLWE(outntt);
+};
+
+var samplePolyRLWE = () => {
+	let out = [];
+
+	let vals = new Uint32Array(keysizeRLWE * 2);
+	self.crypto.getRandomValues(vals);
+
+	for (let i = 0; i < keysizeRLWE; i++) {
+		let rnd1 = (vals[i] % 1000000000) / 1000000000;
+		let rnd2 = (vals[i + 1] % 1000000000) / 1000000000;
+		out[i] = Math.round(Math.sqrt(-2 * Math.log(rnd1)) * Math.cos(2 * Math.PI * rnd2) * sampleBoundRLWE);
+		out[i] += modulusRLWE;
+		out[i] %= modulusRLWE;
+	}
+
+	return out;
 }

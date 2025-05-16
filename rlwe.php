@@ -430,7 +430,9 @@ function finalRLWE($a, $s_I, $p_R, $w) {
  * START OF TESTS
  */
 
-polyDisplay(inttRLWE(nttRLWE([1, 2, 3, 4])));
+polyDisplay(polyMulRLWE([1, 2, 3, 4], [5, 6, 7, 8]));
+
+polyDisplay(samplePolyRLWE());
 
 ?>
 
@@ -438,5 +440,7 @@ polyDisplay(inttRLWE(nttRLWE([1, 2, 3, 4])));
 
 <script src="rlwe.js"></script>
 <script>
-polyDisplay(inttRLWE(nttRLWE([1, 2, 3, 4])));
+polyDisplay(polyMulRLWE([1, 2, 3, 4], [5, 6, 7, 8]));
+
+polyDisplay(samplePolyRLWE());
 </script>
