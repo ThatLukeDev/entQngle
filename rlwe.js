@@ -217,7 +217,9 @@ var inttRLWE = (inverseVal) => {
 	return val;
 }
 
-var polyMulRLWE = (a, b) => {
+var polyMulRLWE = (aIn, bIn) => {
+	let a = aIn.slice();
+	let b = bIn.slice();
 	for (let i = 0; i < keysizeRLWE; i++) {
 		if (a[i] == undefined) {
 			a[i] = 0;
@@ -235,7 +237,9 @@ var polyMulRLWE = (a, b) => {
 	return inttRLWE(outntt);
 };
 
-var polyAddRLWE = (a, b) => {
+var polyAddRLWE = (aIn, bIn) => {
+	let a = aIn.slice();
+	let b = bIn.slice();
 	for (let i = 0; i < keysizeRLWE; i++) {
 		if (a[i] == undefined) {
 			a[i] = 0;
