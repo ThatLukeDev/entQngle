@@ -422,53 +422,67 @@ function finalRLWE($a, $s_I, $p_R, $w) {
 
 ?>
 
-<br>ACC:<br><br>
-
 <?php
 
-$init = initRLWE();
+session_start();
 
-$response = respondRLWE($init[0], $init[1]);
+if ($_POST["keysharedatarlwe"]) {
+	$response = explode(",", $_POST["keysharedatarlwe"]);
+	$response[0] = json_decode(base64_decode($response[0]));
+	$response[1] = json_decode(base64_decode($response[1]));
 
-$final = finalRLWE($init[0], $init[2], $response[0], $response[1]);
+	$final = finalRLWE($_SESSION["initKeyRLWE"][0], $_SESSION["initKeyRLWE"][2], $response[0], $response[1]);
 
-polyDisplay($response[2]);
-polyDisplay($final);
+	$_SESSION["keyRLWE"] = $final;
 
-$v = 0;
-for ($i = 0; $i < 512; $i++) {
-	if ($final[$i] == $response[2][$i]) {
-		$v++;
-	}
+	echo "SUCCESS";
+}
+else {
+	$_SESSION["initKeyRLWE"] = initRLWE();
+
+	echo base64_encode(json_encode($_SESSION["initKeyRLWE"][0]));
+	echo ",";
+	echo base64_encode(json_encode($_SESSION["initKeyRLWE"][1]));
+	echo ",";
 }
 
-echo "<br><br>";
-echo "Cooberation: " . ($v / 512);
-echo "<br><br>";
-
 ?>
-
-<br>JS:<br><br>
 
 <script src="rlwe.js"></script>
 <script>
 
-let init = initRLWE();
+let init = document.body.innerHTML.split(",");
+init[0] = JSON.parse(atob(init[0]));
+init[1] = JSON.parse(atob(init[1]));
+let arr = [];
+for (let key in init[1]) {
+	arr[Number(key)] = init[1][key];
+}
+init[1] = arr;
 
 let response = respondRLWE(init[0], init[1]);
 
-let finale = finalRLWE(init[0], init[2], response[0], response[1]);
-
 polyDisplay(response[2]);
-polyDisplay(finale);
 
-let v = 0;
-for (let i = 0; i < 512; i++) {
-	if (finale[i] == response[2][i]) {
-		v++;
+let txtResponse = "";
+txtResponse += btoa(JSON.stringify(response[0]));
+txtResponse += ",";
+txtResponse += btoa(JSON.stringify(response[1]));
+
+let xhttp = new XMLHttpRequest();
+xhttp.open('POST', '<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>', true);
+xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+xhttp.onreadystatechange = () => {
+	if (xhttp.status == 200 && xhttp.readyState == 4) {
+		localStorage.setItem('key', response[2]);
+		localStorage.setItem('keydate', (new Date()).getTime());
+		document.cookie = 'rlwesessionkey=true';
+		//window.location.href = localStorage.getItem('returnrlweshare');
 	}
-}
-
-document.body.innerHTML += `<br><br>Cooberation: ${v / 512}<br><br>`;
+};
+xhttp.send('keysharedatarlwe='+txtResponse);
 
 </script>
+
+<?php echo "<br>SERVER<br>"; ?>
+<?php polyDisplay($_SESSION["keyRLWE"]); ?>
