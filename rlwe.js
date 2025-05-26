@@ -278,7 +278,7 @@ var SigRLWE = (val) => {
 	let out = [];
 
 	for (let i = 0; i < val.length; i++) {
-		if (val[i] < modulusRLWE || val[i] > 3 * modulusRLWE / 4) {
+		if (val[i] < modulusRLWE / 4 || val[i] > 3 * modulusRLWE / 4) {
 			out[i] = 1;
 		}
 		else {
