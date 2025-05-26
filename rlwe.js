@@ -268,4 +268,65 @@ var samplePolyRLWE = () => {
 	}
 
 	return out;
-}
+};
+
+var SigRLWE = (val) => {
+	let out = [];
+
+	for (let i = 0; i < val.length; i++) {
+		if (val[i] < modulusRLWE || val[i] > 3 * modulusRLWE / 4) {
+			out[i] = 1;
+		}
+		else {
+			out[i] = 0;
+		}
+	}
+
+	return out;
+};
+
+var Mod2sk = (v, w) => {
+	let out = polyAddRLWE(v, polyMulRLWE(w, [(modulusRLWE - 1) / 2]));
+
+	for (let i = 0; i < out.length; i++) {
+		out[i] %= 2;
+	}
+
+	return out;
+};
+
+var initRLWE = () => {
+	let a = inttRLWE(nttRLWE(polyRand(keysizeRLWE, modulusRLWE)));
+
+	let s = samplePolyRLWE();
+	let e = samplePolyRLWE();
+
+	let p = polyAddRLWE(polyMulRLWE(a, s), polyMulRLWE(e, [2]));
+
+	return [a, p, s];
+};
+
+var respondRLWE = (a, p_I) => {
+	let s_R = samplePolyRLWE();
+	let e_R = samplePolyRLWE();
+
+	let p_R = polyAddRLWE(polyMulRLWE(a, s_R), polyMulRLWE(e_R, [2]));
+
+	let e2_R = samplePolyRLWE();
+	let k_R = polyAddRLWE(polyMulRLWE(p_I, s_R), polyMulRLWE(e2_R, [2]));
+
+	let w = SigRLWE(k_R);
+	let sk_R = Mod2sk(k_R, w);
+
+	return [p_R, w, sk_R];
+};
+
+var finalRLWE = (a, s_I, p_R, w) => {
+	let e2_I = samplePolyRLWE();
+
+	let k_I = polyAddRLWE(polyMulRLWE(p_R, s_I), polyMulRLWE(e2_I, [2]));
+
+	let sk_I = Mod2sk(k_I, w);
+
+	return sk_I;
+};

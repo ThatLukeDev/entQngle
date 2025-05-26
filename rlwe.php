@@ -426,13 +426,25 @@ function finalRLWE($a, $s_I, $p_R, $w) {
 
 <?php
 
-/*
- * START OF TESTS
- */
+$init = initRLWE();
 
-polyDisplay(polyMulRLWE([1, 2, 3, 4], [5, 6, 7, 8]));
+$response = respondRLWE($init[0], $init[1]);
 
-polyDisplay(samplePolyRLWE());
+$final = finalRLWE($init[0], $init[2], $response[0], $response[1]);
+
+polyDisplay($response[2]);
+polyDisplay($final);
+
+$v = 0;
+for ($i = 0; $i < 512; $i++) {
+	if ($final[$i] == $response[2][$i]) {
+		$v++;
+	}
+}
+
+echo "<br><br>";
+echo "Cooberation: " . ($v / 512);
+echo "<br><br>";
 
 ?>
 
@@ -440,7 +452,23 @@ polyDisplay(samplePolyRLWE());
 
 <script src="rlwe.js"></script>
 <script>
-polyDisplay(polyMulRLWE([1, 2, 3, 4], [5, 6, 7, 8]));
 
-polyDisplay(samplePolyRLWE());
+let init = initRLWE();
+
+let response = respondRLWE(init[0], init[1]);
+
+let finale = finalRLWE(init[0], init[2], response[0], response[1]);
+
+polyDisplay(response[2]);
+polyDisplay(finale);
+
+let v = 0;
+for (let i = 0; i < 512; i++) {
+	if (finale[i] == response[2][i]) {
+		v++;
+	}
+}
+
+document.body.innerHTML += `<br><br>Cooberation: ${v / 512}<br><br>`;
+
 </script>
