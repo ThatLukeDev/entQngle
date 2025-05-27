@@ -488,7 +488,7 @@ xhttp.onreadystatechange = () => {
 		localStorage.setItem('key', key);
 		localStorage.setItem('keydate', (new Date()).getTime());
 		document.cookie = 'rlwesessionkey=true';
-		//window.location.href = localStorage.getItem('returnrlweshare');
+		window.location.href = localStorage.getItem('returnrlweshare');
 	}
 };
 xhttp.send('keysharedatarlwe='+txtResponse);
