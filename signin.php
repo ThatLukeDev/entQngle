@@ -1,9 +1,8 @@
 <?php
 require_once "config.php";
 
-require_once "lwe.php";
+require_once "pqkx.php";
 session_start();
-autosessionLWE();
 
 $username = "";
 $password = "";
@@ -11,8 +10,8 @@ $password = "";
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	$username = strtolower(lwe_decrypt($_POST["username"]));
-	$password = lwe_decrypt($_POST["password"]);
+	$username = strtolower(pqkx_decrypt($_POST["username"]));
+	$password = pqkx_decrypt($_POST["password"]);
 	$stmt = $mysqli->prepare("select password from users where username = ?");
 	$stmt->bind_param("s", $username);
 	$stmt->execute();
@@ -42,10 +41,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	<body>
 		<form id="form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
 			Username<br>
-			<input class="pass" type="text" name="username" value="<?php echo lwe_encrypt($username); ?>"><br><br>
+			<input class="pass" type="text" name="username" value="<?php echo pqkx_encrypt($username); ?>"><br><br>
 
 			Password<br>
-			<input class="pass" type="password" name="password" value="<?php echo lwe_encrypt($password); ?>"><br>
+			<input class="pass" type="password" name="password" value="<?php echo pqkx_encrypt($password); ?>"><br>
 			<a class="error"><?php echo $error; if (empty($error)) echo "<br>"; ?></a><br><br>
 
 			<input type="submit" value="Sign in">
@@ -53,11 +52,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	</body>
 	<script>
 		document.querySelectorAll(".pass").forEach((v) => {
-			v.value = lwe_decrypt(v.value);
+			v.value = pqkx_decrypt(v.value);
 		});
 		document.querySelector("#form").onsubmit = () => {
 			document.querySelectorAll(".pass").forEach((v) => {
-				v.value = lwe_encrypt(v.value);
+				v.value = pqkx_encrypt(v.value);
 			});
 		};
 	</script>
