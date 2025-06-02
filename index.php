@@ -5,7 +5,7 @@ session_start();
 
 if ($_POST["userspeaker"]) {
 	$_SESSION["lastspoken"] = pqkx_decrypt($_POST["userspeaker"]);
-	header("Location: chat.php?user=" . $_SESSION["lastspoken"]);	// you can see who you are speaking with as an external viewer.
+	header("Location: chat.php?user=" . pqkx_encrypt($_SESSION["lastspoken"]));	// you can see who you are speaking with as an external viewer.
 									// all traffic from the webpage should be treated as compromised,
 									// this includes who you are speaking with, as the server needs this
 									// to route traffic. all chat content should be end to end encrypted pq.
