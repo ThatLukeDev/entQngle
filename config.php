@@ -16,4 +16,18 @@ mysqli_query($mysqli, "create table if not exists users(
 	PRIMARY KEY (username)
 );");
 
+// these are public keys, and will be given to whoever asks. no need for protections
+mysqli_query($mysqli, "create table if not exists userkeys(
+	username varchar(20),
+	key TEXT CHARACTER SET latin1,
+	PRIMARY KEY (username)
+);");
+
+// the sent key is a part of the keysharing process, no need for protections
+mysqli_query($mysqli, "create table if not exists messages(
+	from varchar(20),
+	to varchar(20),
+	key TEXT CHARACTER SET latin1,
+);");
+
 ?>
