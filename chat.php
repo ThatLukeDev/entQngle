@@ -13,7 +13,7 @@ require_once "pqkx.php";
 $user = "";
 
 if ($_GET["user"]) {
-	$user = htmlspecialchars(pqkx_decrypt($user));
+	$user = htmlspecialchars(pqkx_decrypt($_GET["user"]));
 
 	if ($_POST["getUserPublicKey"]) {
 		ob_clean();
