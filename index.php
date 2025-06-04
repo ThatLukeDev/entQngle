@@ -11,6 +11,8 @@ if ($_POST["userspeaker"]) {
 									// to route traffic. all chat content should be end to end encrypted pq.
 }
 
+require_once "localkey.php";
+
 ?>
 
 <!DOCTYPE html>

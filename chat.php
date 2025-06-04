@@ -25,11 +25,16 @@ if ($_GET["user"]) {
 		return;
 	}
 	else if ($_POST["message"]) {
+		// TODO
 	}
 }
 else {
 	$error = "User not specified";
 }
+
+require_once "rlwe-func.php";
+
+require_once "localkey.php";
 
 ?>
 
@@ -69,8 +74,43 @@ else {
 				body: "getUserPublicKey=true"
 			}).then(response => response.text())
 			.then(data => {
-				console.log(data);
+				let id = data.split(";")[1];
+
+				let init = data.split(";")[0].split(",");
+				init[0] = JSON.parse(atob(init[0]));
+				init[1] = JSON.parse(atob(init[1]));
+
+				let response = respondRLWE(init[0], init[1]);
+
+				let txtResponse = `${btoa(JSON.stringify(response[0]))},${btoa(JSON.stringify(response[1]))}`;
+
+				let key = [];
+				for (let i = 0; i < keysizeRLWE / 8; i++) {
+					key[i] = 0;
+				}
+				for (let i = 0; i < keysizeRLWE; i++) {
+					key[Math.floor(i / 8)] |= response[2][i] << (i % 8);
+				}
+
+				let tmpkey = key.slice();
+				let out = "";
+				for (let i = 0; i < message.length; i++) {
+					tmpkey = rollkey(tmpkey.slice());
+					out += String.fromCharCode(message.charCodeAt(i) ^ tmpkey[tmpkey.length - 1]);
+				}
+				out = btoa(out);
+
+				let outputresponse = `${out};${txtResponse};${id}`;
+
+				fetch("<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>?user=<?php echo htmlspecialchars($_GET["user"]); ?>", {
+					headers: {
+						"Content-Type": "application/x-www-form-urlencoded"
+					},
+					method: "POST",
+					body: `message=${outputresponse}`
+				});
 			});
+
 			return false;
 		};
 	</script>

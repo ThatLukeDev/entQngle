@@ -49,7 +49,6 @@ xhttp.open('POST', '<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>', true);
 xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 xhttp.onreadystatechange = () => {
 	if (xhttp.status == 200 && xhttp.readyState == 4) {
-		console.log(xhttp.response);
 	}
 };
 xhttp.send(`localkeyrlwe=${txtpubkey}&lastidrlwe=${lastpubkeyid}&localidrlwe=${pubkeyid}`);
