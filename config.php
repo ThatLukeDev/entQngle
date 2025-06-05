@@ -28,7 +28,7 @@ mysqli_query($mysqli, "create table if not exists userkeys(
 mysqli_query($mysqli, "create table if not exists messages(
 	fromusr varchar(20),
 	tousr varchar(20),
-	keyvk varchar(8192),
+	msgdate date,
 	keyid varchar(256),
 	body text(32768)
 );");

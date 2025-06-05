@@ -25,7 +25,9 @@ if ($_GET["user"]) {
 		return;
 	}
 	else if ($_POST["message"]) {
-		// TODO
+		$stmt = $mysqli->prepare("insert into messages (fromusr, tousr, msgdate, keyid, body) values (?, ?, ?, ?, ?)");
+		$stmt->bind_param("sssss", $_SESSION["username"], $user, date("Y-m-d"), htmlspecialchars($_POST["msgkeyid"]), htmlspecialchars($_POST["message"]));
+		$stmt->execute();
 	}
 }
 else {
@@ -66,7 +68,7 @@ require_once "localkey.php";
 			let message = document.querySelector("#msgcontent").value;
 			document.querySelector("#msgcontent").value = "";
 
-			fetch("<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>?user=<?php echo htmlspecialchars($_GET["user"]); ?>", {
+			fetch("<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>?user=<?php echo htmlspecialchars($_GET["user"]); ?>", { // here $_GET user is encrypted
 				headers: {
 					"Content-Type": "application/x-www-form-urlencoded"
 				},
@@ -107,7 +109,7 @@ require_once "localkey.php";
 						"Content-Type": "application/x-www-form-urlencoded"
 					},
 					method: "POST",
-					body: `message=${outputresponse}`
+					body: `message=${outputresponse}&msgkeyid=${id}`
 				});
 			});
 
