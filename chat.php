@@ -36,7 +36,7 @@ else {
 
 require_once "rlwe-func.php";
 
-require_once "localkey.php";
+//require_once "localkey.php";
 
 ?>
 

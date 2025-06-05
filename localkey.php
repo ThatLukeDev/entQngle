@@ -20,7 +20,7 @@ if ($_POST["localkeyrlwe"]) {
 		$keyvkwarning = "User account E2E key changed. Messages are now only availible from this device";
 	}
 	$stmt = $mysqli->prepare("replace into userkeys VALUES (?, ?, ?)");
-	$stmt->bind_param("sss", $_SESSION["username"], $_POST["localkeyrlwe"], $_POST["localidrlwe"]);
+	$stmt->bind_param("sss", $_SESSION["username"], htmlspecialchars($_POST["localkeyrlwe"]), htmlspecialchars($_POST["localidrlwe"]));
 	$stmt->execute();
 	return;
 }
@@ -40,9 +40,11 @@ for (let i = 0; i < 24; i++) {
 }
 localStorage.setItem("localpubkeyid", pubkeyid);
 
-let localpubkey = initRLWE();
+let localprivpubkey = initRLWE();
 
-let txtpubkey = `${btoa(JSON.stringify(localpubkey[0]))},${btoa(JSON.stringify(localpubkey[1]))},`;
+let txtpubkey = `${btoa(JSON.stringify(localprivpubkey[0]))},${btoa(JSON.stringify(localprivpubkey[1]))},`;
+
+localStorage.setItem("localprivkey", btoa(JSON.stringify(localprivpubkey[2])));
 
 let xhttp = new XMLHttpRequest();
 xhttp.open('POST', '<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>', true);
