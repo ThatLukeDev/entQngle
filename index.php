@@ -76,6 +76,9 @@ if ($_POST["getUserInbox"]) {
 
 		document.querySelector("#user").value = pqkx_decrypt(document.querySelector("#user").value);
 
+		let localpubkey = JSON.parse(atob(localStorage.getItem("localpubkey")));
+		let localprivkey = JSON.parse(atob(localStorage.getItem("localprivkey")));
+
 		document.querySelector("#form").onsubmit = () => {
 			document.querySelectorAll(".pass").forEach((v) => {
 				v.value = pqkx_encrypt(v.value);
@@ -100,14 +103,14 @@ if ($_POST["getUserInbox"]) {
 			let enctext = atob(data[2]);
 			let unsharedkey1 = JSON.parse(atob(data[3].split(",")[0]));
 			let unsharedkey2 = JSON.parse(atob(data[3].split(",")[1]));
-			let sharedkey = finalRLWE(JSON.parse(atob(localStorage.getItem("localpubkey"))), JSON.parse(atob(localStorage.getItem("localprivkey"))), unsharedkey1, unsharedkey2);
+			let sharedkey = finalRLWE(localpubkey, localprivkey, unsharedkey1, unsharedkey2);
 
 			let key = [];
 			for (let i = 0; i < keysizeRLWE / 8; i++) {
 				key[i] = 0;
 			}
 			for (let i = 0; i < keysizeRLWE; i++) {
-				key[Math.floor(i / 8)] |= sharedkey[2][i] << (i % 8);
+				key[Math.floor(i / 8)] |= sharedkey[i] << (i % 8);
 			}
 
 			let tmpkey = key.slice();
