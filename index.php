@@ -90,7 +90,34 @@ if ($_POST["getUserInbox"]) {
 			body: `getUserInbox=${localStorage.getItem("localpubkeyid")}`
 		}).then(response => response.text())
 		.then(data => {
-			console.log(data);
+			if (data.length == 0) {
+				return;
+			}
+
+			data = data.split(";");
+			let name = data[0];
+			let date = data[1];
+			let enctext = atob(data[2]);
+			let unsharedkey1 = JSON.parse(atob(data[3].split(",")[0]));
+			let unsharedkey2 = JSON.parse(atob(data[3].split(",")[1]));
+			let sharedkey = finalRLWE(JSON.parse(atob(localStorage.getItem("localpubkey"))), JSON.parse(atob(localStorage.getItem("localprivkey"))), unsharedkey1, unsharedkey2);
+
+			let key = [];
+			for (let i = 0; i < keysizeRLWE / 8; i++) {
+				key[i] = 0;
+			}
+			for (let i = 0; i < keysizeRLWE; i++) {
+				key[Math.floor(i / 8)] |= sharedkey[2][i] << (i % 8);
+			}
+
+			let tmpkey = key.slice();
+			let out = "";
+			for (let i = 0; i < enctext.length; i++) {
+				tmpkey = rollkey(tmpkey.slice());
+				out += String.fromCharCode(enctext.charCodeAt(i) ^ tmpkey[tmpkey.length - 1]);
+			}
+
+			console.log(out);
 		});
 	</script>
 </html>

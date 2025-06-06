@@ -45,6 +45,7 @@ let localprivpubkey = initRLWE();
 let txtpubkey = `${btoa(JSON.stringify(localprivpubkey[0]))},${btoa(JSON.stringify(localprivpubkey[1]))},`;
 
 localStorage.setItem("localprivkey", btoa(JSON.stringify(localprivpubkey[2])));
+localStorage.setItem("localpubkey", btoa(JSON.stringify(localprivpubkey[0])));
 
 let xhttp = new XMLHttpRequest();
 xhttp.open('POST', '<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>', true);
