@@ -92,35 +92,38 @@ if ($_POST["getUserInbox"]) {
 			method: "POST",
 			body: `getUserInbox=${localStorage.getItem("localpubkeyid")}`
 		}).then(response => response.text())
-		.then(data => {
-			if (data.length == 0) {
+		.then(blob => {
+			if (blob.length == 0) {
 				return;
 			}
+			let blobs = blob.split(":");
 
-			data = data.split(";");
-			let name = data[0];
-			let date = data[1];
-			let enctext = atob(data[2]);
-			let unsharedkey1 = JSON.parse(atob(data[3].split(",")[0]));
-			let unsharedkey2 = JSON.parse(atob(data[3].split(",")[1]));
-			let sharedkey = finalRLWE(localpubkey, localprivkey, unsharedkey1, unsharedkey2);
+			for (let i = 0; i < blobs.length; i++) {
+				data = blobs[i].split(";");
+				let name = data[0];
+				let date = data[1];
+				let enctext = atob(data[2]);
+				let unsharedkey1 = JSON.parse(atob(data[3].split(",")[0]));
+				let unsharedkey2 = JSON.parse(atob(data[3].split(",")[1]));
+				let sharedkey = finalRLWE(localpubkey, localprivkey, unsharedkey1, unsharedkey2);
 
-			let key = [];
-			for (let i = 0; i < keysizeRLWE / 8; i++) {
-				key[i] = 0;
+				let key = [];
+				for (let i = 0; i < keysizeRLWE / 8; i++) {
+					key[i] = 0;
+				}
+				for (let i = 0; i < keysizeRLWE; i++) {
+					key[Math.floor(i / 8)] |= sharedkey[i] << (i % 8);
+				}
+
+				let tmpkey = key.slice();
+				let out = "";
+				for (let i = 0; i < enctext.length; i++) {
+					tmpkey = rollkey(tmpkey.slice());
+					out += String.fromCharCode(enctext.charCodeAt(i) ^ tmpkey[tmpkey.length - 1]);
+				}
+
+				console.log(out);
 			}
-			for (let i = 0; i < keysizeRLWE; i++) {
-				key[Math.floor(i / 8)] |= sharedkey[i] << (i % 8);
-			}
-
-			let tmpkey = key.slice();
-			let out = "";
-			for (let i = 0; i < enctext.length; i++) {
-				tmpkey = rollkey(tmpkey.slice());
-				out += String.fromCharCode(enctext.charCodeAt(i) ^ tmpkey[tmpkey.length - 1]);
-			}
-
-			console.log(out);
 		});
 	</script>
 </html>
