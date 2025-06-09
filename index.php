@@ -76,6 +76,21 @@ if ($_POST["getUserInbox"]) {
 
 		document.querySelector("#user").value = pqkx_decrypt(document.querySelector("#user").value);
 
+		var renderInbox = () => {
+			let items = localStorage.getItem("localinbox");
+			items = items != null ? items : "";
+			document.querySelector("#inbox").innerHTML = "";
+			items.split(";").forEach(v => {
+				if (v != "") {
+					let values = v.split(":");
+					let appnd = document.createElement("button");
+					appnd.innerHTML = `${atob(values[0])} - ${atob(values[1])}`;
+					document.querySelector("#inbox").appendChild(appnd);
+					document.querySelector("#inbox").appendChild(document.createElement("br"));
+				}
+			});
+		};
+
 		let localpubkey = JSON.parse(atob(localStorage.getItem("localpubkey")));
 		let localprivkey = JSON.parse(atob(localStorage.getItem("localprivkey")));
 
@@ -101,7 +116,7 @@ if ($_POST["getUserInbox"]) {
 			for (let i = 0; i < blobs.length; i++) {
 				data = blobs[i].split(";");
 				let name = data[0];
-				let date = data[1];
+				let datestr = data[1];
 				let enctext = atob(data[2]);
 				let unsharedkey1 = JSON.parse(atob(data[3].split(",")[0]));
 				let unsharedkey2 = JSON.parse(atob(data[3].split(",")[1]));
@@ -122,9 +137,16 @@ if ($_POST["getUserInbox"]) {
 					out += String.fromCharCode(enctext.charCodeAt(i) ^ tmpkey[tmpkey.length - 1]);
 				}
 
-				console.log(out);
+				// yes, xss, it is what it is. keys are stored here anyway
+				// this is in plaintext, if comprimised, obfuscation can only do so much
+				let previous = localStorage.getItem("localinbox");
+				localStorage.setItem("localinbox", `${previous != null ? previous : ""};${btoa(datestr)}:${btoa(name)}:${btoa(out)}`);
 			}
+
+			renderInbox();
 		});
+
+		renderInbox();
 	</script>
 </html>
 
