@@ -54,6 +54,6 @@ xhttp.onreadystatechange = () => {
 	if (xhttp.status == 200 && xhttp.readyState == 4) {
 	}
 };
-xhttp.send(`localkeyrlwe=${txtpubkey}&lastidrlwe=${lastpubkeyid}&localidrlwe=${pubkeyid}`);
+xhttp.send(`localkeyrlwe=${encodeURIComponent(txtpubkey)}&lastidrlwe=${encodeURIComponent(lastpubkeyid)}&localidrlwe=${encodeURIComponent(pubkeyid)}`);
 
 </script>

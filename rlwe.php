@@ -69,6 +69,6 @@ xhttp.onreadystatechange = () => {
 		window.location.href = localStorage.getItem('returnrlweshare');
 	}
 };
-xhttp.send('keysharedatarlwe='+txtResponse);
+xhttp.send('keysharedatarlwe='+encodeURIComponent(txtResponse));
 
 </script>

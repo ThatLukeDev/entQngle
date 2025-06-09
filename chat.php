@@ -109,7 +109,7 @@ require_once "localkey.php";
 						"Content-Type": "application/x-www-form-urlencoded"
 					},
 					method: "POST",
-					body: `message=${outputresponse}&msgkeyid=${id}`
+					body: `message=${encodeURIComponent(outputresponse)}&msgkeyid=${encodeURIComponent(id)}`
 				});
 			});
 
