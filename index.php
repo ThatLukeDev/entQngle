@@ -27,6 +27,10 @@ if ($_POST["getUserInbox"]) {
 
 		echo $v[0].";".$v[1].";".$v[2];
 	}
+	// get rid of those unused messages
+	$stmt = $mysqli->prepare("delete from messages where tousr = ? and keyid = ?");
+	$stmt->bind_param("ss", $_SESSION["username"], $_POST["getUserInbox"]);
+	$stmt->execute();
 	return;
 }
 
@@ -80,14 +84,27 @@ if ($_POST["getUserInbox"]) {
 			let items = localStorage.getItem("localinbox");
 			items = items != null ? items : "";
 			document.querySelector("#inbox").innerHTML = "";
-			items.split(";").forEach(v => {
+			items = items.split(";");
+			let inbox = [];
+			items.forEach((v, i) => {
 				if (v != "") {
-					let values = v.split(":");
-					let appnd = document.createElement("button");
-					appnd.innerHTML = `${atob(values[0])} - ${atob(values[1])}`;
-					document.querySelector("#inbox").appendChild(appnd);
-					document.querySelector("#inbox").appendChild(document.createElement("br"));
+					v = v.split(":");
+					for (let j = 0; j < v.length; j++) {
+						v[j] = atob(v[j]);
+					}
+					v.push(i);
+					inbox.push(v);
 				}
+			});
+			inbox.sort().reverse().forEach(values => {
+				let appnd = document.createElement("button");
+				appnd.innerHTML = `${values[0]} - ${values[1]}`;
+				appnd.onclick = () => {
+					window.location.href = `inbox.php`;
+					localStorage.setItem("displayMessage", values[3]);
+				};
+				document.querySelector("#inbox").appendChild(appnd);
+				document.querySelector("#inbox").appendChild(document.createElement("br"));
 			});
 		};
 
