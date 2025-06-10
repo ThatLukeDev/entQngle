@@ -6,8 +6,15 @@
 	<body>
 	</body>
 	<script>
-		let id = Number(localStorage.getItem("displayMessage"));
-		let msg = localStorage.getItem("localinbox").split(";").filter(x => x)[id].split(":");
+		let id = (localStorage.getItem("displayMessage"));
+		let inbox = localStorage.getItem("localinbox").split(";").filter(x => x);
+		let msg = "";
+		for (let i = 0; i < inbox.length; i++) {
+			if (atob(inbox[i].split(":")[3]) == id) {
+				msg = inbox[i];
+			}
+		}
+		msg = msg.split(":");
 		if (msg == "") {
 			throw new Error();
 		}

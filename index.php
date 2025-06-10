@@ -86,13 +86,12 @@ if ($_POST["getUserInbox"]) {
 			document.querySelector("#inbox").innerHTML = "";
 			items = items.split(";");
 			let inbox = [];
-			items.forEach((v, i) => {
+			items.forEach(v => {
 				if (v != "") {
 					v = v.split(":");
 					for (let j = 0; j < v.length; j++) {
 						v[j] = atob(v[j]);
 					}
-					v.push(i);
 					inbox.push(v);
 				}
 			});
@@ -157,7 +156,7 @@ if ($_POST["getUserInbox"]) {
 				// yes, xss, it is what it is. keys are stored here anyway
 				// this is in plaintext, if comprimised, obfuscation can only do so much
 				let previous = localStorage.getItem("localinbox");
-				localStorage.setItem("localinbox", `${previous != null ? previous : ""};${btoa(datestr)}:${btoa(name)}:${btoa(out)}`);
+				localStorage.setItem("localinbox", `${previous != null ? previous : ""};${btoa(datestr)}:${btoa(name)}:${btoa(out)}:${btoa(btoa(Math.random()))}`);
 			}
 
 			renderInbox();
