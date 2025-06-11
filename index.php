@@ -107,6 +107,12 @@ if ($_POST["getUserInbox"]) {
 					inbox.push(v);
 				}
 			});
+			if (inbox.length == 0) {
+				let appnd = document.createElement("span");
+				appnd.style.color = "gray";
+				appnd.innerHTML = `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Its lonely in here...`;
+				document.querySelector("#inbox").appendChild(appnd);
+			}
 			inbox.sort().reverse().forEach(values => {
 				let appnd = document.createElement("button");
 				appnd.textContent = `${values[0]} - ${values[1]}`;
