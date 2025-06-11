@@ -79,6 +79,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	</head>
 	<body>
 		<form id="form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+			<?php
+				if ($FORCESECUREPASSWORDSBYHUMILIATION)
+					echo "<span class='error'>WARNING: To encourage secure password choices,
+					if you attempt to use a passowrd that is already in use, or in the future
+					vice versa, this site will out your username.</span><br><br>";
+			?>
+
 			Username<br>
 			<input class="pass" type="text" name="username" value="<?php echo pqkx_encrypt($username); ?>"><br>
 			<a class="error"><?php echo $username_error; if (!empty($username_error)) echo "<br>"; ?></a><br>
