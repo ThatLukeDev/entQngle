@@ -25,6 +25,8 @@ if ($_GET["user"]) {
 		return;
 	}
 	else if ($_POST["message"]) {
+		if (!isset($_SESSION["username"]))
+			return;
 		$stmt = $mysqli->prepare("insert into messages (fromusr, tousr, msgdate, keyid, body) values (?, ?, ?, ?, ?)");
 		$stmt->bind_param("sssss", $_SESSION["username"], $user, date("Y-m-d"), htmlspecialchars($_POST["msgkeyid"]), htmlspecialchars($_POST["message"]));
 		$stmt->execute();

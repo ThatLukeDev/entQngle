@@ -47,6 +47,9 @@ if ($_POST["getUserInbox"]) {
 				<button id='signin'>Sign in</button>
 				<button id='signup'>Sign up</button>
 			";
+			else echo "
+				<button id='logout'>Sign out</button>
+			";
 		?>
 		<h1>entQngle</h1>
 		<i>A quantum safe chat service.</i>
@@ -74,6 +77,13 @@ if ($_POST["getUserInbox"]) {
 				};
 				document.querySelector('#signup').onclick = () => {
 					document.location.href = 'signup.php';
+				};
+			";
+			else echo "
+				document.querySelector('#logout').onclick = () => {
+					document.location.href = 'index.php';
+					document.cookie = 'PHPSESSID=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
+					document.cookie = 'rlwesessionkey=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
 				};
 			";
 		?>
