@@ -51,7 +51,8 @@ require_once "localkey.php";
 
 		<h1>entQngle</h1>
 
-		<a class="error"><?php echo $error; if (empty($error)) echo "<br>"; ?></a><br><br>
+		<a class="error"><?php echo $error; if (empty($error)) echo "<br>"; ?></a>
+		<br><br>
 
 		<form id="form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) ?>">
 			Message<br>
@@ -64,6 +65,7 @@ require_once "localkey.php";
 		document.querySelector("#homeBtn").onclick = () => {
 			window.location.href = "index.php";
 		};
+
 		document.querySelector("#form").onsubmit = () => {
 			let message = document.querySelector("#msgcontent").value;
 			document.querySelector("#msgcontent").value = "";
@@ -110,7 +112,7 @@ require_once "localkey.php";
 					},
 					method: "POST",
 					body: `message=${encodeURIComponent(outputresponse)}&msgkeyid=${encodeURIComponent(id)}`
-				});
+				}).then(() => document.querySelector("#homeBtn").click());
 			});
 
 			return false;

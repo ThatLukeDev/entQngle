@@ -97,7 +97,7 @@ if ($_POST["getUserInbox"]) {
 			});
 			inbox.sort().reverse().forEach(values => {
 				let appnd = document.createElement("button");
-				appnd.innerHTML = `${values[0]} - ${values[1]}`;
+				appnd.textContent = `${values[0]} - ${values[1]}`;
 				appnd.onclick = () => {
 					window.location.href = `inbox.php`;
 					localStorage.setItem("displayMessage", values[3]);
