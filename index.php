@@ -80,8 +80,10 @@ if ($_POST["getUserInbox"]) {
 
 		document.querySelector("#user").value = pqkx_decrypt(document.querySelector("#user").value);
 
+		let username = pqkx_decrypt("<?php echo pqkx_encrypt($_SESSION["username"]); ?>");
+
 		var renderInbox = () => {
-			let items = localStorage.getItem("localinbox");
+			let items = localStorage.getItem(`localinbox${username}`);
 			items = items != null ? items : "";
 			document.querySelector("#inbox").innerHTML = "";
 			items = items.split(";");
@@ -107,8 +109,13 @@ if ($_POST["getUserInbox"]) {
 			});
 		};
 
-		let localpubkey = JSON.parse(atob(localStorage.getItem("localpubkey")));
-		let localprivkey = JSON.parse(atob(localStorage.getItem("localprivkey")));
+		if (localStorage.getItem(`localpubkey${username}`) == null || localStorage.getItem(`localprivkey${username}`) == null) {
+			setTimeout(() => {
+				window.location.href = "index.php";
+			}, 1000);
+		}
+		let localpubkey = JSON.parse(atob(localStorage.getItem(`localpubkey${username}`)));
+		let localprivkey = JSON.parse(atob(localStorage.getItem(`localprivkey${username}`)));
 
 		document.querySelector("#form").onsubmit = () => {
 			document.querySelectorAll(".pass").forEach((v) => {
@@ -121,7 +128,7 @@ if ($_POST["getUserInbox"]) {
 				"Content-Type": "application/x-www-form-urlencoded"
 			},
 			method: "POST",
-			body: `getUserInbox=${localStorage.getItem("localpubkeyid")}`
+			body: `getUserInbox=${localStorage.getItem(`localpubkeyid${username}`)}`
 		}).then(response => response.text())
 		.then(blob => {
 			if (blob.length == 0) {
@@ -155,8 +162,8 @@ if ($_POST["getUserInbox"]) {
 
 				// yes, xss, it is what it is. keys are stored here anyway
 				// this is in plaintext, if comprimised, obfuscation can only do so much
-				let previous = localStorage.getItem("localinbox");
-				localStorage.setItem("localinbox", `${previous != null ? previous : ""};${btoa(datestr)}:${btoa(name)}:${btoa(out)}:${btoa(btoa(Math.random()))}`);
+				let previous = localStorage.getItem(`localinbox${username}`);
+				localStorage.setItem(`localinbox${username}`, `${previous != null ? previous : ""};${btoa(datestr)}:${btoa(name)}:${btoa(out)}:${btoa(btoa(Math.random()))}`);
 			}
 
 			renderInbox();

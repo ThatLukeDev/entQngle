@@ -18,8 +18,10 @@ require_once "pqkx.php";
 		<div id="host"></div>
 	</body>
 	<script>
+		let username = pqkx_decrypt("<?php echo pqkx_encrypt($_SESSION["username"]); ?>");
+
 		let id = localStorage.getItem("displayMessage");
-		let inbox = localStorage.getItem("localinbox").split(";").filter(x => x);
+		let inbox = localStorage.getItem(`localinbox${username}`).split(";").filter(x => x);
 		let msg = "";
 		for (let i = 0; i < inbox.length; i++) {
 			if (atob(inbox[i].split(":")[3]) == id) {
@@ -48,7 +50,7 @@ require_once "pqkx.php";
 					inbox.splice(i, 1);
 				}
 			}
-			localStorage.setItem("localinbox", inbox.join(";"));
+			localStorage.setItem(`localinbox${username}`, inbox.join(";"));
 			document.querySelector("#homeBtn").click();
 		};
 		document.querySelector("#replydelBtn").onclick = () => {

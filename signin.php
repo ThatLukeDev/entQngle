@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	<body>
 		<form id="form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
 			Username<br>
-			<input class="pass" type="text" name="username" value="<?php echo pqkx_encrypt($username); ?>"><br><br>
+			<input class="pass" id="username" type="text" name="username" value="<?php echo pqkx_encrypt($username); ?>"><br><br>
 
 			Password<br>
 			<input class="pass" type="password" name="password" value="<?php echo pqkx_encrypt($password); ?>"><br>

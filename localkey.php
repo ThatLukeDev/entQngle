@@ -29,6 +29,8 @@ if ($_POST["localkeyrlwe"]) {
 
 <script>
 
+let usernameval = pqkx_decrypt("<?php echo pqkx_encrypt($_SESSION["username"]); ?>");
+
 let lastpubkeyid = localStorage.getItem("localpubkeyid");
 
 let pubkeyid = "";
@@ -38,14 +40,14 @@ self.crypto.getRandomValues(vals); 	// its just an id, doesnt need security, but
 for (let i = 0; i < 24; i++) {
 	pubkeyid += vals[i].toString();
 }
-localStorage.setItem("localpubkeyid", pubkeyid);
+localStorage.setItem(`localpubkeyid${usernameval}`, pubkeyid);
 
 let localprivpubkey = initRLWE();
 
 let txtpubkey = `${btoa(JSON.stringify(localprivpubkey[0]))},${btoa(JSON.stringify(localprivpubkey[1]))},`;
 
-localStorage.setItem("localprivkey", btoa(JSON.stringify(localprivpubkey[2])));
-localStorage.setItem("localpubkey", btoa(JSON.stringify(localprivpubkey[0])));
+localStorage.setItem(`localprivkey${usernameval}`, btoa(JSON.stringify(localprivpubkey[2])));
+localStorage.setItem(`localpubkey${usernameval}`, btoa(JSON.stringify(localprivpubkey[0])));
 
 let xhttp = new XMLHttpRequest();
 xhttp.open('POST', '<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>', true);
