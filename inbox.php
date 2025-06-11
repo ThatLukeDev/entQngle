@@ -42,7 +42,7 @@ require_once "pqkx.php";
 			window.location.href = "index.php";
 		};
 		document.querySelector("#replyBtn").onclick = () => {
-			window.location.href = "chat.php?user=<?php echo pqkx_encrypt($_SESSION["username"]); ?>";
+			window.location.href = `chat.php?user=${pqkx_encrypt(msg[1])}`;
 		};
 		document.querySelector("#deleteBtn").onclick = () => {
 			for (let i = 0; i < inbox.length; i++) {
