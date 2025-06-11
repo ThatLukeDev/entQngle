@@ -1,4 +1,6 @@
 <?php
+$FORCESECUREPASSWORDSBYHUMILIATION = true;
+
 require_once "config.php";
 
 require_once "pqkx.php";
@@ -40,6 +42,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	}
 	else if ($password != $password2) {
 		$password_error = "Passwords do not match";
+	}
+	// WARNING: This is slow but will make the user think twice about choosing a bad password
+	// Many people would call this counterintuitive.
+	if ($FORCESECUREPASSWORDSBYHUMILIATION) {
+		$stmt = $mysqli->prepare("select password, username from users");
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$match = "";
+		while ($data = $result->fetch_row()) {
+			if (password_verify($password, $data[0])) {
+				$match = $data[1];
+			}
+		}
+		if ($match != "") {
+			$password_error = "Password already in use by " . $match;
+		}
 	}
 
 	if (!$username_error && !$password_error) {
