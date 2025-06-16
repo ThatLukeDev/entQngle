@@ -37,10 +37,28 @@ function totp($key) {
 	return hotp_6($key, $stime);
 }
 
+$b32char = [
+	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+	'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+	'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+	'Y', 'Z', '2', '3', '4', '5', '6', '7',
+];
+
 function genotpauth($user, $key) {
-	return "otpauth://totp/EntQngle:" . $user . "?digits=8&secret=" . $secret;
+	$secret = "";
+
+	for ($i = 5; $i < strlen($key) * 8 + 5; $i += 5) {
+		$val = 0;
+		$val |= ord($key[intdiv($i, 8)]) >> (8 - ($i % 8));
+		$val |= ord($key[intdiv($i - 5, 8)]) << ($i % 8);
+		$val &= 31;
+
+		$secret .= $GLOBALS["b32char"][$val];
+	}
+
+	return "otpauth://totp/entQngle:" . $user . "?digits=8&secret=" . $secret;
 }
 
-echo totp("12345678901234567890");
+echo genotpauth("test", "foobar");
 
 ?>
