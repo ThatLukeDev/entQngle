@@ -8,3 +8,8 @@ This should say 'Hello World!': <span id="decrypt"><?php echo pqkx_encrypt("Hell
 let obj = document.querySelector("#decrypt");
 obj.innerHTML = pqkx_decrypt(obj.innerHTML);
 </script>
+
+<script src="qr.js"></script>
+<script>
+QR.test();
+</script>
