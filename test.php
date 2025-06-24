@@ -11,5 +11,4 @@ obj.innerHTML = pqkx_decrypt(obj.innerHTML);
 
 <script src="qr.js"></script>
 <script>
-QR.test();
 </script>
