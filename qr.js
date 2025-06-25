@@ -31,3 +31,21 @@ QR4.genpoly.roots = [
 ];
 QR4.genpoly.poly = QR4.genpoly.roots.slice();
 QR4.genpoly.poly.forEach((v, i, a) => a[i] = QR4.field.roots[v]);
+
+QR4.encodeStr = (str) => {
+	return str;
+};
+
+let teststr = "otpauth://totp/entQngle:test?digits=8&secret=MFRGGZDFMZTWQ2I";
+
+let output = QR4.encodeStr(teststr);
+
+let outhex = "";
+let outbin = "";
+for (let i = 0; i < output.length; i++) {
+	outhex += output.charCodeAt(i).toString(16).padStart(2, '0');
+	outbin += output.charCodeAt(i).toString(2).padStart(8, '0');
+}
+
+document.body.innerHTML = `${outhex}<br><br>${outbin}`;
+console.log(output);

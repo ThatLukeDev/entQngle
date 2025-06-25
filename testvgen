@@ -1,1 +1,1 @@
-qrencode "Test:%s//123" -s 1 -l M -v 4 -d 1 -8 -o "out.png" && eog out.png
+qrencode "otpauth://totp/entQngle:test?digits=8&secret=MFRGGZDFMZTWQ2I" -s 1 -l M -v 4 -d 1 -8 -o "out.png" && eog out.png
