@@ -33,19 +33,41 @@ QR4.genpoly.poly = QR4.genpoly.roots.slice();
 QR4.genpoly.poly.forEach((v, i, a) => a[i] = QR4.field.roots[v]);
 
 QR4.encodeStr = (str) => {
-	return str;
+	let out = "0100"; // byte encoding
+
+	out += str.length.toString(2).padStart(8, '0'); // length
+
+	for (let i = 0; i < str.length; i++) {
+		out += str.charCodeAt(i).toString(2).padStart(8, '0'); // data
+	}
+
+	out += "0000"; // terminator
+
+	for (let i = 0; i < 512 - out.length; i++) {
+		if (i % 2 == 0) {
+			out += "11101100"; // pad 0xec
+		}
+		else {
+			out += "00010001"; // pad 0x11
+		}
+	}
+
+	return out;
 };
 
 let teststr = "otpauth://totp/entQngle:test?digits=8&secret=MFRGGZDFMZTWQ2I";
 
 let output = QR4.encodeStr(teststr);
 
-let outhex = "";
-let outbin = "";
-for (let i = 0; i < output.length; i++) {
-	outhex += output.charCodeAt(i).toString(16).padStart(2, '0');
-	outbin += output.charCodeAt(i).toString(2).padStart(8, '0');
-}
-
-document.body.innerHTML = `${outhex}<br><br>${outbin}`;
+document.body.innerHTML = output;
 console.log(output);
+
+let testVector = "01000011110001101111011101000111000001100001011101010111010001101000001110100010111100101111011101000110111101110100011100000010111101100101011011100111010001010001011011100110011101101100011001010011101001110100011001010111001101110100001111110110010001101001011001110110100101110100011100110011110100111000001001100111001101100101011000110111001001100101011101000011110101001101010001100101001001000111010001110101101001000100010001100100110101011010010101000101011101010001001100100100100100001110110000010001";
+
+if (output == testVector) {
+	document.body.innerHTML += "<br><br>Matches test vector";
+}
+else {
+	document.body.innerHTML += `<br>${testVector}`;
+	alert("No match");
+}
