@@ -12,3 +12,8 @@ obj.innerHTML = pqkx_decrypt(obj.innerHTML);
 <script src="qr.js"></script>
 <script>
 </script>
+<style>
+body {
+	font-family: "Courier New";
+}
+</style>
