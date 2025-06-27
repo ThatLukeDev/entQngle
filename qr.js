@@ -20,13 +20,29 @@ QR4.field.roots = [
 	18, 36, 72, 144, 61, 122, 244, 245, 247, 243, 251, 235, 203, 139, 11, 22, 
 	44, 88, 176, 125, 250, 233, 207, 131, 27, 54, 108, 216, 173, 71, 142, 1
 ];
-QR4.errc = { c: 50, k: 32, r: 9 };
+QR4.field.invroots = QR4.field.roots.slice();
+QR4.field.roots.forEach((v, i, a) => a[v] = i);
+QR4.blocksize = 32;
+QR4.blocks = 2;
+QR4.eccsize = 18;
+QR4.errc = { c: QR4.blocksize + QR4.eccsize, k: QR4.blocksize, r: 9 };
 QR4.genpoly = {};
 QR4.genpoly.roots = [
 	0, 215, 234, 158, 94, 184, 97, 118, 170, 79, 187, 152, 148, 252, 179, 5, 98, 96, 153
 ];
 QR4.genpoly.poly = QR4.genpoly.roots.slice();
 QR4.genpoly.poly.forEach((v, i, a) => a[i] = QR4.field.roots[v]);
+
+QR4.reedSolomon = (polyIn) => {
+	let poly = [];
+	for (let i = 0; i < QR4.eccsize; i++) {
+		poly[i] = 0;
+	}
+	for (let i = 0; i < QR4.blocksize; i++) {
+		poly[i + QR4.eccsize] = polyIn[i];
+	}
+	return poly;
+}
 
 QR4.encodeStr = (str) => {
 	let out = "0100"; // byte encoding
@@ -39,7 +55,7 @@ QR4.encodeStr = (str) => {
 
 	out += "0000"; // terminator
 
-	for (let i = 0; i < 512 - out.length; i++) {
+	for (let i = 0; i < QR4.blocksize * QR4.blocks * 8 - out.length; i++) {
 		if (i % 2 == 0) {
 			out += "11101100"; // pad 0xec
 		}
@@ -50,14 +66,21 @@ QR4.encodeStr = (str) => {
 
 	let blocks = [[], []];
 
-	for (let i = 0; i < 18; i++) {
-		blocks[0][i + 32] = 0;
-		blocks[1][i + 32] = 0;
+	for (let i = 0; i < QR4.eccsize; i++) {
+		blocks[0][i + QR4.blocksize] = 0;
+		blocks[1][i + QR4.blocksize] = 0;
 	}
 
 	for (let i = 0; i < 32; i++) {
 		blocks[0][i] = parseInt(out.substring(i * 8, i * 8 + 8), 2);
-		blocks[1][i] = parseInt(out.substring(32 * 8 + i * 8, 32 * 8 + i * 8 + 8), 2);
+		blocks[1][i] = parseInt(out.substring(QR4.blocksize * 8 + i * 8, QR4.blocksize * 8 + i * 8 + 8), 2);
+	}
+
+	for (let k = 0; k < QR4.blocks; k++) {
+		let ecc = QR4.reedSolomon(blocks[k]);
+		for (let i = 0; i < QR4.eccsize; i++) {
+			blocks[k][i + QR4.blocksize] = ecc[i];
+		}
 	}
 
 	out = "";
