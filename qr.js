@@ -18,20 +18,34 @@ QR4.field.roots = [
 	130, 25, 50, 100, 200, 141, 7, 14, 28, 56, 112, 224, 221, 167, 83, 166, 
 	81, 162, 89, 178, 121, 242, 249, 239, 195, 155, 43, 86, 172, 69, 138, 9, 
 	18, 36, 72, 144, 61, 122, 244, 245, 247, 243, 251, 235, 203, 139, 11, 22, 
-	44, 88, 176, 125, 250, 233, 207, 131, 27, 54, 108, 216, 173, 71, 142, 1
+	44, 88, 176, 125, 250, 233, 207, 131, 27, 54, 108, 216, 173, 71, 142
 ];
 QR4.field.invroots = QR4.field.roots.slice();
-QR4.field.roots.forEach((v, i, a) => a[v] = i);
+QR4.field.roots.forEach((v, i) => QR4.field.invroots[v] = i);
 QR4.blocksize = 32;
 QR4.blocks = 2;
 QR4.eccsize = 18;
 QR4.errc = { c: QR4.blocksize + QR4.eccsize, k: QR4.blocksize, r: 9 };
 QR4.genpoly = {};
 QR4.genpoly.roots = [
-	0, 215, 234, 158, 94, 184, 97, 118, 170, 79, 187, 152, 148, 252, 179, 5, 98, 96, 153
+	153, 96, 98, 5, 179, 252, 148, 152, 187, 79, 170, 118, 97, 184, 94, 158, 234, 215, 0
 ];
 QR4.genpoly.poly = QR4.genpoly.roots.slice();
 QR4.genpoly.poly.forEach((v, i, a) => a[i] = QR4.field.roots[v]);
+
+QR4.multiply = (a, b) => {
+	if (a == 0 || b == 0) {
+		return 0;
+	}
+	return QR4.field.roots[(QR4.field.invroots[a] + QR4.field.invroots[b]) % QR4.field.roots.length];
+}
+
+QR4.divide = (a, b) => {
+	if (a == 0 || b == 0) {
+		return 0;
+	}
+	return QR4.field.roots[(QR4.field.invroots[a] - QR4.field.invroots[b] + QR4.field.roots.length) % QR4.field.roots.length];
+}
 
 QR4.reedSolomon = (polyIn) => {
 	let poly = [];
@@ -41,6 +55,19 @@ QR4.reedSolomon = (polyIn) => {
 	for (let i = 0; i < QR4.blocksize; i++) {
 		poly[i + QR4.eccsize] = polyIn[i];
 	}
+
+	for (let i = 0; i < QR4.blocksize + 1; i++) {
+		let multiplier = QR4.divide(poly[QR4.blocksize + QR4.eccsize - i - 1], QR4.genpoly.poly[QR4.eccsize]);
+		for (let j = 0; j < QR4.eccsize; j++) {
+			let difference = QR4.multiply(QR4.genpoly.poly[QR4.eccsize - j], multiplier);
+			poly[QR4.blocksize + QR4.eccsize - i - j - 1] ^= difference;
+		}
+	}
+
+	console.log("Reed-Solomon-V\n\n");
+	console.log(poly);
+	console.log("\n\n");
+
 	return poly;
 }
 
