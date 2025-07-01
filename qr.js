@@ -28,7 +28,7 @@ QR4.eccsize = 18;
 QR4.errc = { c: QR4.blocksize + QR4.eccsize, k: QR4.blocksize, r: 9 };
 QR4.genpoly = {};
 QR4.genpoly.roots = [
-	153, 96, 98, 5, 179, 252, 148, 152, 187, 79, 170, 118, 97, 184, 94, 158, 234, 215, 0
+	0, 215, 234, 158, 94, 184, 97, 118, 170, 79, 187, 152, 148, 252, 179, 5, 98, 96, 153
 ];
 QR4.genpoly.poly = QR4.genpoly.roots.slice();
 QR4.genpoly.poly.forEach((v, i, a) => a[i] = QR4.field.roots[v]);
@@ -49,24 +49,23 @@ QR4.divide = (a, b) => {
 
 QR4.reedSolomon = (polyIn) => {
 	let poly = [];
-	for (let i = 0; i < QR4.eccsize; i++) {
-		poly[i] = 0;
-	}
 	for (let i = 0; i < QR4.blocksize; i++) {
-		poly[i + QR4.eccsize] = polyIn[i];
+		poly[i] = polyIn[i];
+	}
+	for (let i = 0; i < QR4.eccsize; i++) {
+		poly[i + QR4.blocksize] = 0;
 	}
 
-	for (let i = 0; i < QR4.blocksize + 1; i++) {
-		let multiplier = QR4.divide(poly[QR4.blocksize + QR4.eccsize - i - 1], QR4.genpoly.poly[QR4.eccsize]);
-		for (let j = 0; j < QR4.eccsize; j++) {
-			let difference = QR4.multiply(QR4.genpoly.poly[QR4.eccsize - j], multiplier);
-			poly[QR4.blocksize + QR4.eccsize - i - j - 1] ^= difference;
+	for (let i = 0; i < QR4.blocksize; i++) {
+		let multiplier = QR4.divide(poly[i], QR4.genpoly.poly[0]);
+		for (let j = 0; j < QR4.eccsize + 1; j++) {
+			let difference = QR4.multiply(QR4.genpoly.poly[j], multiplier);
+			poly[i + j] ^= difference;
 		}
 	}
-
-	console.log("Reed-Solomon-V\n\n");
-	console.log(poly);
-	console.log("\n\n");
+	for (let i = 0; i < QR4.eccsize; i++) {
+		poly[i] = poly[i + QR4.blocksize];
+	}
 
 	return poly;
 }
