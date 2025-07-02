@@ -32,6 +32,7 @@ QR4.genpoly.roots = [
 ];
 QR4.genpoly.poly = QR4.genpoly.roots.slice();
 QR4.genpoly.poly.forEach((v, i, a) => a[i] = QR4.field.roots[v]);
+QR4.modules = 33;
 
 QR4.multiply = (a, b) => {
 	if (a == 0 || b == 0) {
@@ -118,6 +119,56 @@ QR4.encodeStr = (str) => {
 	return out;
 };
 
+QR4.encode = (str) => {
+	let data = [];
+
+	for (let x = 0; x < QR4.modules; x++) {
+		data[x] = [];
+
+		for (let y = 0; y < QR4.modules; y++) {
+			data[x][y] = 0;
+		}
+	}
+
+	let finder = "0,0;1,0;2,0;3,0;4,0;5,0;6,0;0,1;6,1;0,2;2,2;3,2;4,2;6,2;0,3;2,3;3,3;4,3;6,3;0,4;2,4;3,4;4,4;6,4;0,5;6,5;0,6;1,6;2,6;3,6;4,6;5,6;6,6".split(";");
+	for (let i = 0; i < finder.length; i++) {
+		data[finder[i].split(",")[0]][finder[i].split(",")[1]] = 1;
+		data[QR4.modules - finder[i].split(",")[0] - 1][finder[i].split(",")[1]] = 1;
+		data[finder[i].split(",")[0]][QR4.modules - finder[i].split(",")[1] - 1] = 1;
+	}
+	let finder2 = "5,5;5,6;5,7;5,8;5,9;6,5;6,9;7,5;7,7;7,9;8,5;8,9;9,5;9,6;9,7;9,8;9,9".split(";");
+	for (let i = 0; i < finder2.length; i++) {
+		data[QR4.modules - finder2[i].split(",")[0]][QR4.modules - finder2[i].split(",")[1]] = 1;
+	}
+	let timer = "6,8;6,10;6,12;6,14;6,16;6,18;6,20;6,22;6,24".split(";");
+	for (let i = 0; i < timer.length; i++) {
+		data[timer[i].split(",")[0]][timer[i].split(",")[1]] = 1;
+		data[timer[i].split(",")[1]][timer[i].split(",")[0]] = 1;
+	}
+
+	return data
+}
+
+QR4.code = (str, scale) => {
+	let canvas = document.createElement("canvas");
+	canvas.width = QR4.modules * scale;
+	canvas.height = QR4.modules * scale;
+
+	let ctx = canvas.getContext("2d");
+
+	let data = QR4.encode(str);
+
+	for (let x = 0; x < QR4.modules; x++) {
+		for (let y = 0; y < QR4.modules; y++) {
+			if (data[x][y] != 0) {
+				ctx.fillRect(x * scale, y * scale, scale, scale);
+			}
+		}
+	}
+
+	return canvas;
+};
+
 let teststr = "otpauth://totp/entQngle:test?digits=8&secret=MFRGGZDFMZTWQ2I";
 
 let output = QR4.encodeStr(teststr);
@@ -142,3 +193,5 @@ else {
 		}
 	}
 }
+
+document.body.appendChild(QR4.code(teststr, 10));
