@@ -146,6 +146,66 @@ QR4.encode = (str) => {
 		data[timer[i].split(",")[1]][timer[i].split(",")[0]] = 1;
 	}
 
+	let bin = QR4.encodeStr(str);
+
+	for (let i = 0; i < bin.length; i++) {
+		// Yeah this is disgraceful but it has to follow a set pattern
+		if (i < (QR4.modules - 9) * 2) {
+			let q = i;
+			data[QR4.modules - 1 - Math.floor(q % 2)][QR4.modules - 1 - Math.floor(q / 2)] = Number(bin[i]);
+		}
+		else if (i < (QR4.modules - 9) * 4) {
+			let q = i - (QR4.modules - 9) * 2;
+			data[QR4.modules - 3 - Math.floor(q % 2)][9 + Math.floor(q / 2)] = Number(bin[i]);
+		}
+		else if (i < (QR4.modules - 9) * 4 + 8) {
+			let q = i - (QR4.modules - 9) * 4;
+			data[QR4.modules - 5 - Math.floor(q % 2)][QR4.modules - 1 - Math.floor(q / 2)] = Number(bin[i]);
+		}
+		else if (i < (QR4.modules - 9) * 6 - 10) {
+			let q = i - (QR4.modules - 9) * 4 + 10;
+			data[QR4.modules - 5 - Math.floor(q % 2)][QR4.modules - 1 - Math.floor(q / 2)] = Number(bin[i]);
+		}
+		else if (i < (QR4.modules - 9) * 8 - 28) {
+			let q = i - (QR4.modules - 9) * 6 + 10;
+			data[QR4.modules - 7 - Math.floor(q % 2)][9 + Math.floor(q / 2)] = Number(bin[i]);
+		}
+		else if (i < (QR4.modules - 9) * 8 - 20) {
+			let q = i - (QR4.modules - 9) * 6 + 20;
+			data[QR4.modules - 7 - Math.floor(q % 2)][9 + Math.floor(q / 2)] = Number(bin[i]);
+		}
+		else if (i < (QR4.modules - 9) * 8 - 12) {
+			let q = i - (QR4.modules - 9) * 8 + 20;
+			data[QR4.modules - 9 - Math.floor(q % 2)][QR4.modules - 1 - Math.floor(q / 2)] = Number(bin[i]);
+		}
+		else if (i < (QR4.modules - 9) * 8 - 7) {
+			let q = i - (QR4.modules - 9) * 8 + 16;
+			data[QR4.modules - 10][QR4.modules - 1 - q] = Number(bin[i]);
+		}
+		// Literally the entire middle of the QR code
+		else if (i < (QR4.modules - 9) * 28 + 7) {
+			let q = i - (QR4.modules - 9) * 8 + 25;
+			let x = QR4.modules - 9 - Math.floor(q % 2) - Math.floor(q / (QR4.modules - 1) / 2) * 2;
+			let y = Math.floor(q / 2) % (QR4.modules - 1);
+			if (Math.floor(q / ((QR4.modules - 1) * 2)) % 2 == 0) {
+				if (y > QR4.modules - 8) {
+					y += 1;
+				}
+				data[x][QR4.modules - 1 - y] = Number(bin[i]);
+			}
+			else {
+				if (y > 5) {
+					y += 1;
+				}
+				data[x][y] = Number(bin[i]);
+			}
+		}
+		else {
+			// TODO
+		}
+	}
+	// TODO timing patterns
+
 	return data
 }
 
