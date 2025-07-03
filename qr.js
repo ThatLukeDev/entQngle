@@ -130,22 +130,6 @@ QR4.encode = (str) => {
 		}
 	}
 
-	let finder = "0,0;1,0;2,0;3,0;4,0;5,0;6,0;0,1;6,1;0,2;2,2;3,2;4,2;6,2;0,3;2,3;3,3;4,3;6,3;0,4;2,4;3,4;4,4;6,4;0,5;6,5;0,6;1,6;2,6;3,6;4,6;5,6;6,6".split(";");
-	for (let i = 0; i < finder.length; i++) {
-		data[finder[i].split(",")[0]][finder[i].split(",")[1]] = 1;
-		data[QR4.modules - finder[i].split(",")[0] - 1][finder[i].split(",")[1]] = 1;
-		data[finder[i].split(",")[0]][QR4.modules - finder[i].split(",")[1] - 1] = 1;
-	}
-	let finder2 = "5,5;5,6;5,7;5,8;5,9;6,5;6,9;7,5;7,7;7,9;8,5;8,9;9,5;9,6;9,7;9,8;9,9".split(";");
-	for (let i = 0; i < finder2.length; i++) {
-		data[QR4.modules - finder2[i].split(",")[0]][QR4.modules - finder2[i].split(",")[1]] = 1;
-	}
-	let timer = "6,8;6,10;6,12;6,14;6,16;6,18;6,20;6,22;6,24".split(";");
-	for (let i = 0; i < timer.length; i++) {
-		data[timer[i].split(",")[0]][timer[i].split(",")[1]] = 1;
-		data[timer[i].split(",")[1]][timer[i].split(",")[0]] = 1;
-	}
-
 	let bin = QR4.encodeStr(str);
 
 	for (let i = 0; i < bin.length; i++) {
@@ -215,7 +199,55 @@ QR4.encode = (str) => {
 			}
 		}
 	}
-	// TODO timing patterns
+
+	for (let x = 0; x < QR4.modules; x++) {
+		for (let y = 0; y < QR4.modules; y++) {
+			data[x][y] ^= 1 - ((x + y) % 2);
+		}
+	}
+
+	for (let x = 0; x < 8; x++) {
+		for (let y = 0; y < 8; y++) {
+			data[x][y] = 0;
+			data[QR4.modules - 1 - x][y] = 0;
+			data[x][QR4.modules - 1 - y] = 0;
+		}
+	}
+	for (let x = 0; x < 3; x++) {
+		for (let y = 0; y < 3; y++) {
+			data[x + 25][y + 25] = 0;
+		}
+	}
+
+	let finder = "0,0;1,0;2,0;3,0;4,0;5,0;6,0;0,1;6,1;0,2;2,2;3,2;4,2;6,2;0,3;2,3;3,3;4,3;6,3;0,4;2,4;3,4;4,4;6,4;0,5;6,5;0,6;1,6;2,6;3,6;4,6;5,6;6,6".split(";");
+	for (let i = 0; i < finder.length; i++) {
+		data[finder[i].split(",")[0]][finder[i].split(",")[1]] = 1;
+		data[QR4.modules - finder[i].split(",")[0] - 1][finder[i].split(",")[1]] = 1;
+		data[finder[i].split(",")[0]][QR4.modules - finder[i].split(",")[1] - 1] = 1;
+	}
+	let finder2 = "5,5;5,6;5,7;5,8;5,9;6,5;6,9;7,5;7,7;7,9;8,5;8,9;9,5;9,6;9,7;9,8;9,9".split(";");
+	for (let i = 0; i < finder2.length; i++) {
+		data[QR4.modules - finder2[i].split(",")[0]][QR4.modules - finder2[i].split(",")[1]] = 1;
+	}
+	let timer = "6,8;6,10;6,12;6,14;6,16;6,18;6,20;6,22;6,24".split(";");
+	for (let i = 0; i < timer.length; i++) {
+		data[timer[i].split(",")[0]][timer[i].split(",")[1]] = 1;
+		data[timer[i].split(",")[1]][timer[i].split(",")[0]] = 1;
+	}
+
+	// temp format patterns
+
+	data[8][8] = 0;
+	data[8][0] = 0;
+	data[8][1] = 1;
+	data[8][2] = 0;
+
+	data[QR4.modules - 1][8] = 0;
+	data[QR4.modules - 2][8] = 1;
+	data[QR4.modules - 3][8] = 0;
+	data[QR4.modules - 4][8] = 0;
+	data[QR4.modules - 7][8] = 0;
+	data[8][QR4.modules - 7] = 0;
 
 	return data
 }
