@@ -56,7 +56,7 @@ function genotpauth($user, $key) {
 		$secret .= $GLOBALS["b32char"][$val];
 	}
 
-	return "otpauth://totp/entQngle:" . $user . "?digits=8&secret=" . $secret;
+	return "otpauth://totp/entQngle:" . substr($user, 0, 4) . "?digits=8&secret=" . $secret;
 }
 
 function totp_genkey() {
