@@ -16,7 +16,7 @@ $error = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["code"]) {
 	if (preg_replace("/[^0-9]/", "", $_POST["code"]) == totp($totpkey)) {
 		$stmt = $mysqli->prepare("insert into users values (?, ?, ?)");
-		$stmt->bind_param("sss", $_SESSION["usrsub"], $_SESSION["passhashsub"], base64_encode($totpkey));
+		$stmt->bind_param("sss", $_SESSION["usrsub"], $_SESSION["passhash"], base64_encode($totpkey));
 		$stmt->execute();
 
 		header("Location: signin.php");
