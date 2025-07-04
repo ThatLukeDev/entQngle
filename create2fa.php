@@ -8,15 +8,15 @@ require_once "pqkx.php";
 
 require_once "totp.php";
 
-$totpkey = totp_genkey();
+$totpkey = $_SESSION["totpkey"];
 $otpauth = genotpauth($_SESSION["usrsub"], $totpkey);
 
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["code"]) {
-	if ($_POST["code"] == totp($totpkey)) {
+	if (preg_replace("/[^0-9]/", "", $_POST["code"]) == totp($totpkey)) {
 		$stmt = $mysqli->prepare("insert into users values (?, ?, ?)");
-		$stmt->bind_param("ss", $_SESSION["usrsub"], $_SESSION["passhashsub"], base64_encode($totpkey));
+		$stmt->bind_param("sss", $_SESSION["usrsub"], $_SESSION["passhashsub"], base64_encode($totpkey));
 		$stmt->execute();
 
 		header("Location: signin.php");
@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["code"]) {
 			document.querySelectorAll(".pass").forEach((v) => {
 				v.innerHTML = pqkx_decrypt(v.innerHTML);
 			});
-			let otp = document.querySelector("#displayCode").innerHTML;
+			let otp = document.querySelector("#displayCode").innerHTML.replace("&amp;","&");
 			document.querySelector("#d2Code").appendChild(QR4.code(otp, 10));
 		</script>
 	</body>

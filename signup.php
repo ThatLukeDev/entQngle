@@ -3,6 +3,8 @@ $FORCESECUREPASSWORDSBYHUMILIATION = true;
 
 require_once "config.php";
 
+require_once "totp.php";
+
 require_once "pqkx.php";
 session_start();
 
@@ -61,6 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	}
 
 	if (!$username_error && !$password_error) {
+		$_SESSION["totpkey"] = totp_genkey();
 		$_SESSION["usrsub"] = $username;
 		$_SESSION["passhash"] = password_hash($password, PASSWORD_DEFAULT);
 
