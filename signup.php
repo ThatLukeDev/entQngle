@@ -61,12 +61,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	}
 
 	if (!$username_error && !$password_error) {
-		$password_hash = password_hash($password, PASSWORD_DEFAULT);
-		$stmt = $mysqli->prepare("insert into users values (?, ?)");
-		$stmt->bind_param("ss", $username, $password_hash);
-		$stmt->execute();
+		$_SESSION["usrsub"] = $username;
+		$_SESSION["passhash"] = password_hash($password, PASSWORD_DEFAULT);
 
-		header("Location: signin.php");
+		header("Location: create2fa.php");
 	}
 }
 

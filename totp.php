@@ -59,17 +59,12 @@ function genotpauth($user, $key) {
 	return "otpauth://totp/entQngle:" . $user . "?digits=8&secret=" . $secret;
 }
 
-function genkey() {
+function totp_genkey() {
 	$secret = "";
 	for ($i = 0; $i < 10; $i++) {
 		$secret .= chr(random_int(0, 255)); // rand_int is cryptographically secure
 	}
 	return $secret;
 }
-
-//$key = genkey();
-$key = "abcdefghi";
-echo genotpauth("test", $key) . "<br>";
-echo totp($key) . "<br>";
 
 ?>

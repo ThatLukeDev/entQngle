@@ -13,6 +13,7 @@ mysqli_select_db($mysqli, SQLDBNAME);
 mysqli_query($mysqli, "create table if not exists users(
 	username varchar(20),
 	password varchar(255),
+	totp varchar(32),
 	PRIMARY KEY (username)
 );");
 
